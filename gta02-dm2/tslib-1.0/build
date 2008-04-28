@@ -1,0 +1,21 @@
+#!/bin/sh
+
+. ../BUILD_SETTINGS
+
+# stop problems coming from non-GNU malloc
+export ac_cv_func_malloc_0_nonnull=yes
+
+if [ ! -e Makefile ] ; then
+
+./autogen.sh
+
+./configure $DIST_CONFIGURE_OPTIONS &&
+make -s clean
+
+fi
+
+make -s &&
+make -s install DESTDIR=`pwd`/../staging
+
+
+

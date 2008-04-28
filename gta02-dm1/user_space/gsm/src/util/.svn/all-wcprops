@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/204/trunk/production_testing/gta02-testlet/user_space/gsm/src/util
+END
+event.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/util/event.c
+END
+event.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/util/event.h
+END
+pin.c
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/util/pin.c
+END
+shell.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/util/shell.c
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/204/trunk/production_testing/gta02-testlet/user_space/gsm/src/util/Makefile.am
+END
+atcmd.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/util/atcmd.c
+END
+pin.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/util/pin.h
+END
+libgsmd-tool.c
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/util/libgsmd-tool.c
+END
+shell.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/util/shell.h
+END
+atcmd.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/util/atcmd.h
+END

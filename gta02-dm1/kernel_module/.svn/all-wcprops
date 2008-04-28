@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/!svn/ver/456/trunk/production_testing/gta02-testlet/kernel_module
+END
+gta02_bt.patch
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/341/trunk/production_testing/gta02-testlet/kernel_module/gta02_bt.patch
+END
+gta02_pm_gps.patch
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/456/trunk/production_testing/gta02-testlet/kernel_module/gta02_pm_gps.patch
+END
+gta02_pcf50633.patch
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/341/trunk/production_testing/gta02-testlet/kernel_module/gta02_pcf50633.patch
+END
+gta02_wm8753.patch
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/437/trunk/production_testing/gta02-testlet/kernel_module/gta02_wm8753.patch
+END
+setup-kernel.sh
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/123/trunk/production_testing/gta02-testlet/kernel_module/setup-kernel.sh
+END
+dot-config
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/115/trunk/production_testing/gta02-testlet/kernel_module/dot-config
+END
+gta02_gsm_dl_off.patch
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/341/trunk/production_testing/gta02-testlet/kernel_module/gta02_gsm_dl_off.patch
+END
+Revision
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/123/trunk/production_testing/gta02-testlet/kernel_module/Revision
+END

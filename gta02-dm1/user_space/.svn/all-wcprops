@@ -1,0 +1,125 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/!svn/ver/757/trunk/production_testing/gta02-testlet/user_space
+END
+sdcard.c
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/119/trunk/production_testing/gta02-testlet/user_space/sdcard.c
+END
+graphics.c
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/296/trunk/production_testing/gta02-testlet/user_space/graphics.c
+END
+audio.c
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/!svn/ver/119/trunk/production_testing/gta02-testlet/user_space/audio.c
+END
+touchpanel.c
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/358/trunk/production_testing/gta02-testlet/user_space/touchpanel.c
+END
+lcd.c
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/120/trunk/production_testing/gta02-testlet/user_space/lcd.c
+END
+led.c
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/724/trunk/production_testing/gta02-testlet/user_space/led.c
+END
+bluetooth.c
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/724/trunk/production_testing/gta02-testlet/user_space/bluetooth.c
+END
+sensor.c
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/119/trunk/production_testing/gta02-testlet/user_space/sensor.c
+END
+norflash.c
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/357/trunk/production_testing/gta02-testlet/user_space/norflash.c
+END
+main.c
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/724/trunk/production_testing/gta02-testlet/user_space/main.c
+END
+gsm.c
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/724/trunk/production_testing/gta02-testlet/user_space/gsm.c
+END
+vibrator.c
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/724/trunk/production_testing/gta02-testlet/user_space/vibrator.c
+END
+rtc.c
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/724/trunk/production_testing/gta02-testlet/user_space/rtc.c
+END
+backlight.c
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/!svn/ver/357/trunk/production_testing/gta02-testlet/user_space/backlight.c
+END
+dm_init.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/!svn/ver/295/trunk/production_testing/gta02-testlet/user_space/dm_init.h
+END
+key.c
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/358/trunk/production_testing/gta02-testlet/user_space/key.c
+END
+gps.c
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/724/trunk/production_testing/gta02-testlet/user_space/gps.c
+END
+batt.c
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/757/trunk/production_testing/gta02-testlet/user_space/batt.c
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/724/trunk/production_testing/gta02-testlet/user_space/Makefile
+END
+wireless.c
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/!svn/ver/119/trunk/production_testing/gta02-testlet/user_space/wireless.c
+END

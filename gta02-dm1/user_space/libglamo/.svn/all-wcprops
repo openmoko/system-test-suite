@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/!svn/ver/366/trunk/production_testing/gta02-testlet/user_space/libglamo
+END
+hw.c
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/294/trunk/production_testing/gta02-testlet/user_space/libglamo/hw.c
+END
+blit.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/294/trunk/production_testing/gta02-testlet/user_space/libglamo/blit.h
+END
+dma.c
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/366/trunk/production_testing/gta02-testlet/user_space/libglamo/dma.c
+END
+os.c
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/294/trunk/production_testing/gta02-testlet/user_space/libglamo/os.c
+END
+glamo-regs.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/294/trunk/production_testing/gta02-testlet/user_space/libglamo/glamo-regs.h
+END
+hw.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/294/trunk/production_testing/gta02-testlet/user_space/libglamo/hw.h
+END
+glamo.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/294/trunk/production_testing/gta02-testlet/user_space/libglamo/glamo.h
+END
+dma.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/294/trunk/production_testing/gta02-testlet/user_space/libglamo/dma.h
+END
+blit.c
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/294/trunk/production_testing/gta02-testlet/user_space/libglamo/blit.c
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/!svn/ver/294/trunk/production_testing/gta02-testlet/user_space/libglamo/Makefile
+END

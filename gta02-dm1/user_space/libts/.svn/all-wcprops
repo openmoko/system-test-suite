@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/!svn/ver/186/trunk/production_testing/gta02-testlet/user_space/libts
+END
+config.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/179/trunk/production_testing/gta02-testlet/user_space/libts/config.h
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/186/trunk/production_testing/gta02-testlet/user_space/libts/Makefile
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/179/trunk/production_testing/gta02-testlet/user_space/libts/README
+END

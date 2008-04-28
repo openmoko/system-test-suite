@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd @pkgdatadir@
+exec @bindir@/dm2.bin
+

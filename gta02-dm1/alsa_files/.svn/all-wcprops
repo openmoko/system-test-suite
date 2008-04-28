@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/!svn/ver/437/trunk/production_testing/gta02-testlet/alsa_files
+END
+gta02_gsm_headset.state
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/437/trunk/production_testing/gta02-testlet/alsa_files/gta02_gsm_headset.state
+END
+gta02_gsm_receiver.state
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/437/trunk/production_testing/gta02-testlet/alsa_files/gta02_gsm_receiver.state
+END
+gta02_music_speaker.state
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/437/trunk/production_testing/gta02-testlet/alsa_files/gta02_music_speaker.state
+END
+gta02_music_headset.state
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/437/trunk/production_testing/gta02-testlet/alsa_files/gta02_music_headset.state
+END

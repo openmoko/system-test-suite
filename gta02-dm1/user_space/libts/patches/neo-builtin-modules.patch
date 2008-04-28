@@ -1,0 +1,192 @@
+Index: libts/src/ts_config.c
+===================================================================
+--- libts.orig/src/ts_config.c	2007-11-01 00:45:05.000000000 +0800
++++ libts/src/ts_config.c	2007-11-01 01:09:13.000000000 +0800
+@@ -25,6 +25,7 @@
+ 
+ int ts_config(struct tsdev *ts)
+ {
++#if 0
+ 	char buf[BUF_SIZE], *p;
+ 	FILE *f;
+ 	int line = 0;
+@@ -97,4 +98,7 @@
+ 	fclose(f);
+ 
+ 	return ret;
++#endif
++
++	return ts_load_builtins(ts);
+ }
+Index: libts/src/tslib-private.h
+===================================================================
+--- libts.orig/src/tslib-private.h	2007-11-01 00:45:05.000000000 +0800
++++ libts/src/tslib-private.h	2007-11-01 01:08:35.000000000 +0800
+@@ -28,8 +28,11 @@
+ 
+ int __ts_attach(struct tsdev *ts, struct tslib_module_info *info);
+ int __ts_attach_raw(struct tsdev *ts, struct tslib_module_info *info);
++int ts_load_builtins(struct tsdev *dev);
++#if 0
+ int ts_load_module(struct tsdev *dev, const char *module, const char *params);
+ int ts_load_module_raw(struct tsdev *dev, const char *module, const char *params);
++#endif
+ int ts_error(const char *fmt, ...);
+ 
+ #ifdef __cplusplus
+Index: libts/src/ts_load_module.c
+===================================================================
+--- libts.orig/src/ts_load_module.c	2007-11-01 00:45:05.000000000 +0800
++++ libts/src/ts_load_module.c	2007-11-01 01:10:37.000000000 +0800
+@@ -21,6 +21,26 @@
+ 
+ #include "tslib-private.h"
+ 
++typedef struct tslib_module_info *(ts_builtin_init)(struct tsdev *, const char *);
++extern ts_builtin_init mod_init_input_raw;
++extern ts_builtin_init mod_init_pthres;
++extern ts_builtin_init mod_init_variance;
++extern ts_builtin_init mod_init_dejitter;
++extern ts_builtin_init mod_init_linear;
++
++static const struct builtin {
++	const char *name;
++	ts_builtin_init *init;
++} builtins[] = {
++	{ .name = "input",	.init = mod_init_input_raw },
++	{ .name = "pthres",	.init = mod_init_pthres },
++	{ .name = "variance",	.init = mod_init_variance },
++	{ .name = "dejitter",	.init = mod_init_dejitter },
++	{ .name = "linear",	.init = mod_init_linear },
++	{ .name = NULL,		.init = NULL },
++};
++
++#if 0
+ int __ts_load_module(struct tsdev *ts, const char *module, const char *params, int raw)
+ {
+ 	struct tslib_module_info * (*init)(struct tsdev *, const char *);
+@@ -86,3 +106,59 @@
+ {
+ 	return __ts_load_module(ts, module, params, 1);
+ }
++#endif
++
++static int __ts_load_builtin(struct tsdev *ts, const char *module, const char *params, int raw)
++{
++	const struct builtin *b;
++	struct tslib_module_info *info;
++	int ret = -1;
++
++	for (b = builtins; b->name; b++)
++	{
++		if (strcmp(b->name, module) != 0)
++			continue;
++
++		info = b->init(ts, params);
++		if (!info)
++			return -1;
++
++		info->handle = NULL;
++		if (raw) {
++			ret = __ts_attach_raw(ts, info);
++		} else {
++			ret = __ts_attach(ts, info);
++		}
++		if (ret) {
++			info->ops->fini(info);
++			return ret;
++		}
++	}
++
++	return ret;
++}
++
++int ts_load_builtins(struct tsdev *ts)
++{
++	int ret;
++
++	ret = __ts_load_builtin(ts, "input", "grab_events=1", 1);
++	if (ret)
++		return ret;
++
++	ret = __ts_load_builtin(ts, "pthres", "pmin=1", 0);
++	if (ret)
++		return ret;
++
++	ret = __ts_load_builtin(ts, "variance", "delta=30", 0);
++	if (ret)
++		return ret;
++
++	ret = __ts_load_builtin(ts, "dejitter", "delta=100", 0);
++	if (ret)
++		return ret;
++
++	ret = __ts_load_builtin(ts, "linear", NULL, 0);
++
++	return ret;
++}
+Index: libts/plugins/dejitter.c
+===================================================================
+--- libts.orig/plugins/dejitter.c	2007-11-01 00:45:35.000000000 +0800
++++ libts/plugins/dejitter.c	2007-11-01 00:45:40.000000000 +0800
+@@ -197,7 +197,7 @@
+ 
+ #define NR_VARS (sizeof(dejitter_vars) / sizeof(dejitter_vars[0]))
+ 
+-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
++TSAPI struct tslib_module_info *mod_init_dejitter(struct tsdev *dev, const char *params)
+ {
+ 	struct tslib_dejitter *djt;
+ 
+Index: libts/plugins/linear.c
+===================================================================
+--- libts.orig/plugins/linear.c	2007-11-01 00:45:35.000000000 +0800
++++ libts/plugins/linear.c	2007-11-01 00:45:40.000000000 +0800
+@@ -98,7 +98,7 @@
+ 
+ #define NR_VARS (sizeof(linear_vars) / sizeof(linear_vars[0]))
+ 
+-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
++TSAPI struct tslib_module_info *mod_init_linear(struct tsdev *dev, const char *params)
+ {
+ 
+ 	struct tslib_linear *lin;
+Index: libts/plugins/pthres.c
+===================================================================
+--- libts.orig/plugins/pthres.c	2007-11-01 00:45:35.000000000 +0800
++++ libts/plugins/pthres.c	2007-11-01 00:45:40.000000000 +0800
+@@ -131,7 +131,7 @@
+ 
+ #define NR_VARS (sizeof(pthres_vars) / sizeof(pthres_vars[0]))
+ 
+-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
++TSAPI struct tslib_module_info *mod_init_pthres(struct tsdev *dev, const char *params)
+ {
+ 
+ 	struct tslib_pthres *p;
+Index: libts/plugins/variance.c
+===================================================================
+--- libts.orig/plugins/variance.c	2007-11-01 00:45:35.000000000 +0800
++++ libts/plugins/variance.c	2007-11-01 00:45:40.000000000 +0800
+@@ -161,7 +161,7 @@
+ 
+ #define NR_VARS (sizeof(variance_vars) / sizeof(variance_vars[0]))
+ 
+-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
++TSAPI struct tslib_module_info *mod_init_variance(struct tsdev *dev, const char *params)
+ {
+ 	struct tslib_variance *var;
+ 
+Index: libts/plugins/input-raw.c
+===================================================================
+--- libts.orig/plugins/input-raw.c	2007-11-01 00:45:35.000000000 +0800
++++ libts/plugins/input-raw.c	2007-11-01 00:45:58.000000000 +0800
+@@ -283,7 +283,7 @@
+ 
+ #define NR_VARS (sizeof(raw_vars) / sizeof(raw_vars[0]))
+ 
+-TSAPI struct tslib_module_info *mod_init(struct tsdev *dev, const char *params)
++TSAPI struct tslib_module_info *mod_init_input_raw(struct tsdev *dev, const char *params)
+ {
+ 	struct tslib_input *i;
+ 

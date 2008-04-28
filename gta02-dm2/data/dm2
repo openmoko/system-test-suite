@@ -1,0 +1,5 @@
+#!/bin/sh
+export TSLIB_TSDEVICE=/dev/input/touchscreen0
+cd /usr/share/dm2
+exec /usr/bin/dm2.bin
+

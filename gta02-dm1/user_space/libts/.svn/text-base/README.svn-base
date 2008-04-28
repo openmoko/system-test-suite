@@ -1,0 +1,3 @@
+This directory contains a stripped down version of tslib-1.0.tar.bz2.  Plus,
+only selected plugins are compiled, and are made built-ins.  See patches/ for
+details.

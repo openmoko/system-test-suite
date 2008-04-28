@@ -1,0 +1,36 @@
+This patch will disable the GSM download fucntion to avoid gsm's noise coming out from audio system
+It is based on OpenMoko kernel patches: version 3238
+Index: linux-2.6.22.5/arch/arm/common/gta01_pm_gsm.c
+===================================================================
+--- linux-2.6.22.5.orig/arch/arm/common/gta01_pm_gsm.c	2007-11-27 11:38:56.000000000 +0800
++++ linux-2.6.22.5/arch/arm/common/gta01_pm_gsm.c	2007-11-27 11:40:32.000000000 +0800
+@@ -21,6 +21,7 @@
+ #include <asm/hardware.h>
+ #include <asm/mach-types.h>
+ #include <asm/arch/gta01.h>
++#include <asm/arch/regs-gpioj.h>
+ 
+ #ifdef CONFIG_MACH_NEO1973_GTA02
+ #include <asm/arch/gta02.h>
+@@ -89,8 +90,12 @@
+ 			switch (system_rev) {
+ #ifdef CONFIG_MACH_NEO1973_GTA02
+ 			case GTA02v2_SYSTEM_REV:
++				printk(KERN_INFO
++				       "NEO_GSM_SET PCF50633_GPIO2\n");
+ 				pcf50633_gpio_set(pcf50633_global,
+ 						  PCF50633_GPIO2, 1);
++				s3c2410_gpio_cfgpin(GTA02v4_GPIO_nDL_GSM, S3C2410_GPIO_OUTPUT);
++				s3c2410_gpio_setpin(GTA02v4_GPIO_nDL_GSM,1);
+ 				break;
+ #endif
+ 			}
+@@ -188,6 +193,8 @@
+ 		case GTA02v1_SYSTEM_REV:
+ 		case GTA02v2_SYSTEM_REV:
+ 			gta01_gsm.gpio_ngsm_en = 0;
++			s3c2410_gpio_cfgpin(GTA02v4_GPIO_nDL_GSM, S3C2410_GPIO_OUTPUT);
++			s3c2410_gpio_setpin(GTA02v4_GPIO_nDL_GSM,1);
+ 			break;
+ #endif
+ 		default:

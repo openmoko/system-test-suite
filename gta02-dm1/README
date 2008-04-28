@@ -1,0 +1,7 @@
+This directory contains the testlets for GTA02 production.
+
+kernel_module/
+  requird kernel modules for GTA02 testing usage.
+
+user_space/
+  Linux executables as testlets.

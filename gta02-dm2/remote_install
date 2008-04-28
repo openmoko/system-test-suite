@@ -1,0 +1,8 @@
+#!/bin/sh
+
+. ./BUILD_SETTINGS
+
+# install on device
+scp $TARBALL root@$DEVICE_IP:/tmp
+ssh root@$DEVICE_IP "cd / ; tar xzf /tmp/$TARBALL ; rm /tmp/$TARBALL"
+

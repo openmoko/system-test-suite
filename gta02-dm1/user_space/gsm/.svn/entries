@@ -1,0 +1,150 @@
+8
+
+dir
+757
+https://svn.internal.openmoko.org/trunk/production_testing/gta02-testlet/user_space/gsm
+https://svn.internal.openmoko.org
+
+
+
+2007-11-09T08:17:40.081650Z
+204
+erin_yueh
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+66881bcf-9a29-0410-b710-b4726655af6a
+
+crossconf
+file
+
+
+
+
+2008-04-27T09:12:51.000000Z
+0ff80056083377e3551a2a94779f3d23
+2007-11-09T08:17:40.081650Z
+204
+erin_yueh
+has-props
+
+include
+dir
+
+configure.ac
+file
+
+
+
+
+2008-04-27T09:12:51.000000Z
+099ae0f4410c7eff745b77acf83e710f
+2007-11-09T07:26:28.621205Z
+202
+erin_yueh
+
+logs
+dir
+
+doc
+dir
+
+src
+dir
+
+ChangeLog
+file
+
+
+
+
+2008-04-27T09:12:51.000000Z
+d41d8cd98f00b204e9800998ecf8427e
+2007-11-09T07:26:28.621205Z
+202
+erin_yueh
+
+libgsmd.pc.in
+file
+
+
+
+
+2008-04-27T09:12:51.000000Z
+bcc5d1a88d83ea387a833a432b2e57be
+2007-11-09T07:26:28.621205Z
+202
+erin_yueh
+
+COPYING
+file
+
+
+
+
+2008-04-27T09:12:51.000000Z
+751419260aa954499f7abaabaa882bbe
+2007-11-09T07:26:28.621205Z
+202
+erin_yueh
+
+Makefile.am
+file
+
+
+
+
+2008-04-27T09:12:51.000000Z
+99aa3044457d42fe4dd8d58e278f0be0
+2007-11-09T08:17:40.081650Z
+204
+erin_yueh
+
+COPYING.library
+file
+
+
+
+
+2008-04-27T09:12:51.000000Z
+2d5025d4aa3495befef8f17206a5b0a1
+2007-11-09T07:26:28.621205Z
+202
+erin_yueh
+
+README.txt
+file
+
+
+
+
+2008-04-27T09:12:51.000000Z
+3bea95792d4010d6bd6fcfdac0370cc7
+2007-11-09T07:26:28.621205Z
+202
+erin_yueh
+
+autogen.sh
+file
+
+
+
+
+2008-04-27T09:12:51.000000Z
+a5024fae18f03f5e5179692649b25360
+2007-11-09T07:26:28.621205Z
+202
+erin_yueh
+has-props
+

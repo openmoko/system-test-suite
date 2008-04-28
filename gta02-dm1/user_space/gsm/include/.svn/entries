@@ -1,0 +1,49 @@
+8
+
+dir
+757
+https://svn.internal.openmoko.org/trunk/production_testing/gta02-testlet/user_space/gsm/include
+https://svn.internal.openmoko.org
+
+
+
+2007-11-09T07:26:28.621205Z
+202
+erin_yueh
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+66881bcf-9a29-0410-b710-b4726655af6a
+
+libgsmd
+dir
+
+common
+dir
+
+Makefile.am
+file
+
+
+
+
+2008-04-27T09:12:50.000000Z
+b2583f3888e0ad1d8229c585fbb6c5ea
+2007-11-09T07:26:28.621205Z
+202
+erin_yueh
+
+gsmd
+dir
+

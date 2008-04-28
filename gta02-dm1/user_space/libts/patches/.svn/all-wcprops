@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/179/trunk/production_testing/gta02-testlet/user_space/libts/patches
+END
+neo-builtin-modules.patch
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/!svn/ver/179/trunk/production_testing/gta02-testlet/user_space/libts/patches/neo-builtin-modules.patch
+END
+series
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/179/trunk/production_testing/gta02-testlet/user_space/libts/patches/series
+END
+tslib-input_raw-grab_events.patch
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/!svn/ver/179/trunk/production_testing/gta02-testlet/user_space/libts/patches/tslib-input_raw-grab_events.patch
+END

@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# Openmoko house build settings
+#  use the toolchain tarball from
+#
+#  http://wiki.openmoko.org/wiki/Toolchain
+#
+# which installs to a fixed location
+
+# use the fixed toolchain path
+TOOLCHAIN=/usr/local/openmoko/arm/bin
+
+export PATH=$TOOLCHAIN:$PATH
+
+STAGING_DIR=`pwd`/staging
+
+DIST_CONFIGURE_OPTIONS="--build=`uname -i` \
+ --host=arm-angstrom-linux-gnueabi \
+ --target=arm-angstrom-linux-gnueabi \
+ --prefix=/usr \
+ --exec_prefix=/usr \
+ --bindir=/usr/bin \
+ --sbindir=/usr/sbin \
+ --libexecdir=/usr/libexec \
+ --datadir=/usr/share \
+ --sysconfdir=/etc \
+ --sharedstatedir=/usr/com \
+ --localstatedir=/var \
+ --libdir=/usr/lib \
+ --includedir=/usr/include \
+ --oldincludedir=/usr/include \
+ --infodir=/usr/share/info \
+ --mandir=/usr/share/man"
+
+TARBALL=dm2.tar.gz
+DEVICE_IP=192.168.0.202
+

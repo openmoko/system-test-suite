@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/!svn/ver/186/trunk/production_testing/gta02-testlet/user_space/libusb
+END
+error.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/178/trunk/production_testing/gta02-testlet/user_space/libusb/error.h
+END
+usb.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/178/trunk/production_testing/gta02-testlet/user_space/libusb/usb.h
+END
+linux.c
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/178/trunk/production_testing/gta02-testlet/user_space/libusb/linux.c
+END
+descriptors.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/178/trunk/production_testing/gta02-testlet/user_space/libusb/descriptors.c
+END
+linux.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/178/trunk/production_testing/gta02-testlet/user_space/libusb/linux.h
+END
+usbi.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/178/trunk/production_testing/gta02-testlet/user_space/libusb/usbi.h
+END
+error.c
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/!svn/ver/178/trunk/production_testing/gta02-testlet/user_space/libusb/error.c
+END
+usb.c
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/178/trunk/production_testing/gta02-testlet/user_space/libusb/usb.c
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/186/trunk/production_testing/gta02-testlet/user_space/libusb/Makefile
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/!svn/ver/178/trunk/production_testing/gta02-testlet/user_space/libusb/README
+END

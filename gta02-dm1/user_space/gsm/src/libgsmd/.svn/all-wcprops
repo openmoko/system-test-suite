@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/!svn/ver/204/trunk/production_testing/gta02-testlet/user_space/gsm/src/libgsmd
+END
+libgsmd_input.c
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/libgsmd/libgsmd_input.c
+END
+libgsmd.c
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/libgsmd/libgsmd.c
+END
+libgsmd_event.c
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/libgsmd/libgsmd_event.c
+END
+libgsmd_voicecall.c
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/libgsmd/libgsmd_voicecall.c
+END
+libgsmd_sms.c
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/libgsmd/libgsmd_sms.c
+END
+libgsmd_phonebook.c
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/libgsmd/libgsmd_phonebook.c
+END
+lgsm_internals.h
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/libgsmd/lgsm_internals.h
+END
+libgsmd_pin.c
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/libgsmd/libgsmd_pin.c
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/!svn/ver/204/trunk/production_testing/gta02-testlet/user_space/gsm/src/libgsmd/Makefile.am
+END
+libgsmd_passthrough.c
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/libgsmd/libgsmd_passthrough.c
+END
+libgsmd_network.c
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/libgsmd/libgsmd_network.c
+END
+libgsmd_phone.c
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/libgsmd/libgsmd_phone.c
+END

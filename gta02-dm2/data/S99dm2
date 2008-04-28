@@ -1,0 +1,54 @@
+#!/bin/sh
+killproc() {            # kill the named process(es)
+        pid=`/bin/ps -e x |
+             /bin/grep $1 |
+             /bin/grep -v grep |
+             /bin/sed -e 's/^  *//' -e 's/ .*//'`
+        [ "$pid" != "" ] && kill $pid
+}
+
+case "$1" in
+  start)
+    # We don't want this script to block the rest of the boot process
+
+        export TSLIB_TSDEVICE=/dev/input/event1
+        export LD_LIBRARY_PATH=/etc/lib       
+        export TSLIB_CALIBFILE=/etc/pointercal
+        export TSLIB_CONFFILE=/etc/ts.conf
+        export TSLIB_FBDEVICE=/dev/fb0
+       # export TSLIB_PLUGINDIR=/etc/tslib/plugins
+
+    # probe wm8753 sound card
+
+	#modprobe snd-soc-neo1973-gta02-wm8753
+
+    # wifi on
+
+        #ifconfig eth0 up
+
+     # usb0
+
+        ifconfig usb0 192.168.0.202
+
+#       . /etc/profile
+
+     # echo "Calibrating" > /dev/tty0
+
+     #  ts_calibrate 
+		
+	echo "Starting DM2" > /dev/tty0
+
+        dm2&
+  ;;
+
+  stop)
+        echo "Stopping DM2"
+        killproc dm2
+  ;;
+ 
+  *)
+	echo" more"
+  ;;		
+
+esac
+exit 0

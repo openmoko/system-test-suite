@@ -1,0 +1,7 @@
+#!/bin/sh
+
+./configure					\
+	--host=arm-angstrom-linux-gnueabi	\
+	--enable-static				\
+	--disable-shared			\
+	--prefix=/usr				

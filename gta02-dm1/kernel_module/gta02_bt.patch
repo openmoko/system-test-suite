@@ -1,0 +1,135 @@
+This patch is based on OpenMoko kernel patches: version 3238
+Index: linux-2.6.22.5/arch/arm/common/gta01_pm_bt.c
+===================================================================
+--- linux-2.6.22.5.orig/arch/arm/common/gta01_pm_bt.c	2007-11-27 11:08:02.000000000 +0800
++++ linux-2.6.22.5/arch/arm/common/gta01_pm_bt.c	2007-11-27 11:09:17.000000000 +0800
+@@ -16,12 +16,13 @@
+ #include <linux/kernel.h>
+ #include <linux/platform_device.h>
+ 
+-#include <linux/pcf50606.h>
++//#include <linux/pcf50606.h>
+ 
+ #include <asm/hardware.h>
+ #include <asm/mach-types.h>
+ #include <asm/arch/gta01.h>
+ #include <asm/arch/gta02.h>
++#include <linux/pcf50633.h>
+ 
+ #define DRVMSG "FIC Neo1973 Bluetooth Power Management"
+ 
+@@ -31,11 +32,11 @@
+ 	if (!strcmp(attr->attr.name, "power_on")) {
+ 		switch (machine_arch_type) {
+ 		case MACH_TYPE_NEO1973_GTA01:
+-			if (pcf50606_onoff_get(pcf50606_global,
+-						PCF50606_REGULATOR_D1REG) &&
+-			    pcf50606_voltage_get(pcf50606_global,
+-						 PCF50606_REGULATOR_D1REG) == 3100)
+-				goto out_1;
++//			if (pcf50606_onoff_get(pcf50606_global,
++//						PCF50606_REGULATOR_D1REG) &&
++//			    pcf50606_voltage_get(pcf50606_global,
++//						 PCF50606_REGULATOR_D1REG) == 3100)
++//				goto out_1;
+ 			break;
+ 		case MACH_TYPE_NEO1973_GTA02:
+ 			if (s3c2410_gpio_getpin(GTA02_GPIO_BT_EN))
+@@ -64,20 +65,21 @@
+ 			const char *buf, size_t count)
+ {
+ 	unsigned long on = simple_strtoul(buf, NULL, 10);
++	unsigned int vol;
+ 
+ 	if (!strcmp(attr->attr.name, "power_on")) {
+ 		switch (machine_arch_type) {
+ 		case MACH_TYPE_NEO1973_GTA01:
+ 			/* if we are powering up, assert reset, then power, then
+ 			 * release reset */
+-			if (on) {
+-				s3c2410_gpio_setpin(GTA01_GPIO_BT_EN, 0);
+-				pcf50606_voltage_set(pcf50606_global,
+-						     PCF50606_REGULATOR_D1REG,
+-						     3100);
+-			}
+-			pcf50606_onoff_set(pcf50606_global,
+-					   PCF50606_REGULATOR_D1REG, on);
++//			if (on) {
++//				s3c2410_gpio_setpin(GTA01_GPIO_BT_EN, 0);
++//				pcf50606_voltage_set(pcf50606_global,
++//						     PCF50606_REGULATOR_D1REG,
++//						     3100);
++//			}
++//			pcf50606_onoff_set(pcf50606_global,
++//					   PCF50606_REGULATOR_D1REG, on);
+ 			s3c2410_gpio_setpin(GTA01_GPIO_BT_EN, on);
+ 			break;
+ 		case MACH_TYPE_NEO1973_GTA02:
+@@ -95,6 +97,20 @@
+ 			break;
+ 		case MACH_TYPE_NEO1973_GTA02:
+ 			s3c2410_gpio_setpin(GTA02_GPIO_BT_EN, on ? 0 : 1 );
++			if (!on)
++			{
++				dev_info (dev, "BT ---ON\n");
++				pcf50633_voltage_set(pcf50633_global,PCF50633_REGULATOR_LDO4, 3200);
++				pcf50633_ldo4ena_set(pcf50633_global,0x01);	
++			}
++			else
++			{
++				dev_info (dev, "BT ---OFF\n");
++				//pcf50633_voltage_set(pcf50633_global,PCF50633_REGULATOR_LDO5, 3000);
++				pcf50633_ldo4ena_set(pcf50633_global,0x00);		
++			}
++			vol = pcf50633_voltage_get(pcf50633_global,PCF50633_REGULATOR_LDO4);
++			dev_info (dev, "Set PCF50633 LDO4 = %d\n",vol);
+ 			break;
+ 		}
+ 	}
+@@ -145,8 +161,8 @@
+ 	switch (machine_arch_type) {
+ 	case MACH_TYPE_NEO1973_GTA01:
+ 		/* we make sure that the voltage is off */
+-		pcf50606_onoff_set(pcf50606_global,
+-				   PCF50606_REGULATOR_D1REG, 0);
++//		pcf50606_onoff_set(pcf50606_global,
++//				   PCF50606_REGULATOR_D1REG, 0);
+ 		break;
+ 	case MACH_TYPE_NEO1973_GTA02:
+ 		/* FIXME: implementation */
+Index: linux-2.6.22.5/arch/arm/mach-s3c2440/mach-gta02.c
+===================================================================
+--- linux-2.6.22.5.orig/arch/arm/mach-s3c2440/mach-gta02.c	2007-11-27 11:15:39.000000000 +0800
++++ linux-2.6.22.5/arch/arm/mach-s3c2440/mach-gta02.c	2007-11-27 11:16:51.000000000 +0800
+@@ -208,10 +208,10 @@
+ 			},
+ 		},
+ 		[PCF50633_REGULATOR_LDO4] = {
+-			.name		= "gl_2v5",
++			.name		= "bt_3v2",
+ 			.voltage	= {
+ 				.init	= 2500,
+-				.max	= 2500,
++				.max	= 3300,
+ 			},
+ 		},
+ 		[PCF50633_REGULATOR_LDO5] = {
+@@ -544,6 +544,9 @@
+ 	.name		= "gta01-pm-gsm",
+ };
+ 
++static struct platform_device gta02_pm_gps_dev = { 
++	.name		= "gta02-pm-gps",
++};
+ /* USB */
+ static struct s3c2410_hcd_info gta02_usb_info = {
+ 	.port[0]	= {
+@@ -666,6 +669,8 @@
+ 	platform_device_register(&gta01_button_dev);
+ 	platform_device_register(&gta01_pm_gsm_dev);
+ 
++	platform_device_register(&gta02_pm_gps_dev);
++
+ 	mangle_pmu_pdata_by_system_rev();
+ 	platform_device_register(&gta02_pmu_dev);
+ 	platform_device_register(&gta01_led_dev);

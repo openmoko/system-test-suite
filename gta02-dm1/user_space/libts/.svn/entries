@@ -1,0 +1,76 @@
+8
+
+dir
+757
+https://svn.internal.openmoko.org/trunk/production_testing/gta02-testlet/user_space/libts
+https://svn.internal.openmoko.org
+
+
+
+2007-11-02T18:44:01.569286Z
+186
+olv
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+66881bcf-9a29-0410-b710-b4726655af6a
+
+plugins
+dir
+
+tests
+dir
+
+patches
+dir
+
+src
+dir
+
+config.h
+file
+
+
+
+
+2008-04-27T09:12:52.000000Z
+736dfdf3538e4e777d095a515a5130dd
+2007-10-31T17:27:04.857152Z
+179
+olv
+
+Makefile
+file
+
+
+
+
+2008-04-27T09:12:52.000000Z
+8a83bf9ea0cb9180824260758cf9dbb2
+2007-11-02T18:44:01.569286Z
+186
+olv
+
+README
+file
+
+
+
+
+2008-04-27T09:12:52.000000Z
+daaefb8a7db02b82139b0d3a3ce1e6c4
+2007-10-31T17:27:04.857152Z
+179
+olv
+

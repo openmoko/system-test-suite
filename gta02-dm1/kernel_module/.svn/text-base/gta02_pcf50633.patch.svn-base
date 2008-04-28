@@ -1,0 +1,42 @@
+This patch is based on OpenMoko kernel patches: version 3238
+Index: linux-2.6.22.5/drivers/i2c/chips/pcf50633.c
+===================================================================
+--- linux-2.6.22.5.orig/drivers/i2c/chips/pcf50633.c	2007-11-27 11:20:34.000000000 +0800
++++ linux-2.6.22.5/drivers/i2c/chips/pcf50633.c	2007-11-27 11:22:06.000000000 +0800
+@@ -441,6 +441,19 @@
+ }
+ EXPORT_SYMBOL_GPL(pcf50633_voltage_get);
+ 
++void pcf50633_ldo4ena_set(struct pcf50633_data*pcf, u_int8_t val)
++{
++	reg_write(pcf,PCF50633_REG_LDO4ENA,val);
++}
++EXPORT_SYMBOL(pcf50633_ldo4ena_set);
++
++void pcf50633_ldo5ena_set(struct pcf50633_data*pcf, u_int8_t val)
++{
++	reg_write(pcf,PCF50633_REG_LDO5ENA,val);
++}
++EXPORT_SYMBOL(pcf50633_ldo5ena_set);
++
++
+ /* go into 'STANDBY' mode, i.e. power off the main CPU and peripherals */
+ void pcf50633_go_standby(void)
+ {
+Index: linux-2.6.22.5/include/linux/pcf50633.h
+===================================================================
+--- linux-2.6.22.5.orig/include/linux/pcf50633.h	2007-11-27 11:21:19.000000000 +0800
++++ linux-2.6.22.5/include/linux/pcf50633.h	2007-11-27 11:22:42.000000000 +0800
+@@ -31,6 +31,12 @@
+ };
+ 
+ extern void
++pcf50633_ldo4ena_set(struct pcf50633_data*pcf, u_int8_t val);
++
++extern void
++pcf50633_ldo5ena_set(struct pcf50633_data*pcf, u_int8_t val);
++
++extern void
+ pcf50633_gpio_set(struct pcf50633_data *pcf, enum pcf50633_gpio gpio, int on);
+ 
+ extern int

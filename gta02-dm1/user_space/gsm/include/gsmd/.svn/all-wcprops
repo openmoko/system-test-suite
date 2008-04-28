@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/include/gsmd
+END
+gsmd.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/include/gsmd/gsmd.h
+END
+ts0705.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/include/gsmd/ts0705.h
+END
+sms.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/include/gsmd/sms.h
+END
+ts0707.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/include/gsmd/ts0707.h
+END
+vendorplugin.h
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/include/gsmd/vendorplugin.h
+END
+talloc.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/include/gsmd/talloc.h
+END
+select.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/include/gsmd/select.h
+END
+state.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/include/gsmd/state.h
+END
+event.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/include/gsmd/event.h
+END
+unsolicited.h
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/include/gsmd/unsolicited.h
+END
+machineplugin.h
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/include/gsmd/machineplugin.h
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/include/gsmd/Makefile.am
+END
+usock.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/include/gsmd/usock.h
+END
+extrsp.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/include/gsmd/extrsp.h
+END
+atcmd.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/include/gsmd/atcmd.h
+END

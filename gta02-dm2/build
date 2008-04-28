@@ -1,0 +1,73 @@
+#!/bin/sh
+
+# super kludge (TM) build script to allow tslib + dm2 build just by toolchain
+
+. ./BUILD_SETTINGS
+
+if [ -e RELEASE_STRING -a -e ./configure.ac ]; then
+	(sed s/REPLACE_DM_VERSION/`cat RELEASE_STRING`/g \
+		configure.ac > configure.ac.sed_modifyed && \
+		mv configure.ac.sed_modifyed configure.ac )
+	echo "#define DM_SW_VERSION \"`cat RELEASE_STRING`\"" > \
+		src/gta02_dm2_version.h
+fi
+
+if [ "$1" = "clean" -o "$1" = "distclean" ] ; then
+	rm configure
+	cd tslib-1.0
+	make $1
+	rm configure
+	cd ..
+	make $1
+	rm -rf staging/*
+	rm -f $TARBALL
+	exit 0
+fi
+
+# stop problems coming from non-GNU malloc
+export ac_cv_func_malloc_0_nonnull=yes
+
+cd tslib-1.0
+./build
+if [ $? -ne 0 ] ; then
+ exit $?
+fi
+
+cd ..
+
+if [ ! -e Makefile ] ; then
+
+./autogen.sh
+
+export PKG_CONFIG_PATH="$STAGING_DIR/usr/lib/pkgconfig/"
+
+ls $PKG_CONFIG_PATH
+
+./configure $DIST_CONFIGURE_OPTIONS \
+	--enable-fb \
+	--disable-x11 \
+	--enable-static \
+	--disable-shared \
+	CFLAGS="-I$STAGING_DIR/usr/include -L$STAGING_DIR/usr/lib"
+make -s clean 
+fi
+
+make -s &&\
+make -s install DESTDIR=`pwd`/staging
+
+# override ts.conf
+cp om-dm2-ts.conf staging/etc/ts.conf
+
+# include data dir
+cp data/*.state staging/etc
+
+# test_script
+mkdir -p staging/home/root
+cp data/test_script staging/home/root
+
+
+# cook tarball
+cd staging
+tar czf ../$TARBALL .
+cd ..
+

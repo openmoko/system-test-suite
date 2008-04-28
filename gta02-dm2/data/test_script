@@ -1,0 +1,133 @@
+#! /bin/sh -e
+
+export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
+
+case "$1" in
+
+	pmu)       
+  		case "$2" in
+ 
+			get_battval)
+					cat /sys/bus/i2c/devices/0-0073/battvolt
+					;;
+			
+			charge_start)
+					echo Y | i2cset 0 0x08 0x29 0x2f
+					;;
+			
+			charge_stop)
+					echo Y | i2cset 0 0x08 0x29 0x0
+					;;
+
+			get_time)
+					echo "Time : "
+					date +%Y%m%d%H%M 					
+					;;
+
+			*)
+					echo "$1 [more option]"
+					;;
+		esac
+		;;
+	audio)
+
+		case "$2" in
+          	
+		 detect)
+			AUDIOFAIL=0
+			i2cdetect -a -y 0 0x1a 0x1a | grep XX && AUDIOFAIL=1
+
+			if [ $AUDIOFAIL == 0 ]; then
+				echo "[Audio Detect]: OK" 
+			else
+				echo "[Audio Detect]: FAIL"
+			fi	
+			;;	
+   		 play)        	     							          		
+		       alsactl -f /home/root/asound.loud.state restore
+	              	aplay /home/root/win.wav &
+			;;		      				
+
+  		 stop)
+		
+			kill -SIGHUP `ps | grep -i "aplay $/home/root/win.wav" | grep -v grep | awk '{print $1}'`
+			alsactl -f /home/root/asound.quiet.state restore
+			;;		
+
+		   *)
+			echo "$1 [more option]"
+			;;
+
+		esac
+		;;
+
+	 wifi)
+
+		case "$2" in
+
+			    on)	
+				ifconfig eth0 up
+				;;
+	
+			detect)
+				FAIL=1
+				iwconfig | grep eth0 && FAIL=0
+				if [ $FAIL == 0 ] ; then
+				 echo "[WiFi Detect]: OK" 
+				else
+				 echo "[WiFi Detect]: FAIL"
+				fi
+				;;
+
+			scan)			
+				iwlist eth0 scan | grep ESSID			
+				;;
+
+			setSSID)
+
+                                LOG=/root/wifi_log
+
+                                iwlist scan | awk -f checkAP.awk | sort | head -n1 | cut -c5- > /tmp/apname
+				if test -f /tmp/apname ; then
+					apname=`cat /tmp/apname`
+				fi
+
+				DO_TRY=0
+				if test x"$apname" = x56 ; then
+					DO_TRY=1
+				fi
+				if test x"$apname" = x78 ; then
+					DO_TRY=1
+				fi
+				echo setSSID: $apname
+				if test ! -z $DO_TRY  ; then
+                                	iwconfig eth0 essid 56
+                                	udhcpc --interface=eth0
+					iperf -c 192.168.1.22 -i 2 -b 11M -u -n 6M -t 4| grep 2.0 | grep 4.0 > $LOG 
+				else
+					echo "[WiFi setSSID FAIL]"
+				fi
+				;;
+			off)
+				ifconfig eth0 down
+				;;
+	  		*)
+			      echo "$1 [more option]"
+			      ;;
+
+		esac
+		;;
+      off)
+
+	      sync
+		
+     	      kill -9  `ps | grep dm2 | awk '{print $1}'`
+	      kill -9  `ps | grep dm2 | awk '{print $1}'`	   
+                ;;
+
+	*)
+		echo "[more option]"
+		;;	
+esac
+exit 0
+

@@ -1,0 +1,161 @@
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/!svn/ver/204/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd
+END
+vendor_ti.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/vendor_ti.h
+END
+gsmd.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/gsmd.h
+END
+machine_tihtc.c
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/machine_tihtc.c
+END
+gsmd_event.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/gsmd_event.h
+END
+machine_generic.c
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/machine_generic.c
+END
+machine.c
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/machine.c
+END
+machine_generic.h
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/machine_generic.h
+END
+sms_cb.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/sms_cb.c
+END
+sms_pdu.c
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/sms_pdu.c
+END
+vendor_bcm.c
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/vendor_bcm.c
+END
+ext_response.c
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/ext_response.c
+END
+operator_cache.c
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/operator_cache.c
+END
+talloc.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/talloc.c
+END
+select.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/select.c
+END
+vendor_qc.c
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/vendor_qc.c
+END
+timer.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/timer.c
+END
+log.c
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/log.c
+END
+vendorplugin.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/vendorplugin.h
+END
+unsolicited.c
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/unsolicited.c
+END
+usock.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/usock.c
+END
+atcmd.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/atcmd.c
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/204/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/Makefile.am
+END
+vendor_tihtc.c
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/vendor_tihtc.c
+END
+vendor_ti.c
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/vendor_ti.c
+END
+gsmd.c
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/gsmd.c
+END
+vendor.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/!svn/ver/202/trunk/production_testing/gta02-testlet/user_space/gsm/src/gsmd/vendor.c
+END

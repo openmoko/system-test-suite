@@ -1,0 +1,75 @@
+2008-04-15 Miles Hsieh <miles_hsieh@openmoko.com>
+        *src/dm2.c:
+
+	1.Update to 0.0.25
+
+2008-04-15 Miles Hsieh <miles_hsieh@openmoko.com>
+        *src/dm2.c:
+
+	1.add CN Test
+	2.Update to 0.0.24
+
+2008-04-10 Miles Hsieh <miles_hsieh@openmoko.com>
+        *src/dm2.c:
+
+	1.audio time shorten  from 7 sec to 3 sec for production line
+	2.Update to 0.0.23
+
+2008-04-03 Miles Hsieh <miles_hsieh@openmoko.com>
+        *src/dm2.c:
+
+	1.Final image process is ready
+	2.Update to 0.0.22
+
+2008-03-31 Miles Hsieh <miles_hsieh@openmoko.com>
+        *src/dm2.c:
+
+	1.Modify to fit the Sensor
+	2.Update to 0.0.21
+
+2008-03-25 Miles Hsieh <miles_hsieh@openmoko.com>
+        *src/dm2.c:
+
+	1.Use kernel 2.6.24 
+	2.Add HDQ, Motion Sensor
+	3.Change method
+	4.Update to 0.0.20
+
+2008-02-05 Nod Huang  <nod_huang@openmoko.com>
+	*src/dm2.c:
+
+	 1.fixed GSM debug path :
+	   right now we will turn it on when we leave dm2 
+
+	 2.Change Battery Test criterial
+         3.Fine Tune test flow
+	 4.Update to 0.0.12
+
+2008-01-24 Nod Huang  <nod_huang@openmoko.com>
+	*src/dm2.c:
+
+	 1.Extend Mobile Test
+         2.Fine Tune test flow
+	 3.Change Battery Test criterial
+	 4.Update to 0.0.11
+
+2008-01-18  Nod Huang  <nod_huang@openmoko.com>
+	*src/dm2.c:
+
+	 1.Extend BT scan time
+         2.Fine Tune test flow
+	 3.Change Battery Test criterial
+	 4.Update to 0.0.9
+
+2008-01-09  Nod Huang  <nod_huang@openmoko.com>
+	*src/dm2.c
+	Fixed BT will cause display error
+
+2008-01-04  Nod Huang  <nod_huang@openmoko.com>
+	*src/dm2.c
+	Release Draft to Production Test
+
+2007-11-14  Nod Huang  <nod_huang@openmoko.com>
+	*src/dm2.c
+	Modify to fit the GTA02
+	

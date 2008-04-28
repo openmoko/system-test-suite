@@ -1,0 +1,40 @@
+8
+
+dir
+757
+https://svn.internal.openmoko.org/trunk/production_testing/gta02-testlet/kernel_module/dm_patches
+https://svn.internal.openmoko.org
+
+
+
+2007-10-22T07:20:50.857859Z
+123
+jserv
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+66881bcf-9a29-0410-b710-b4726655af6a
+
+dm_applied.patch
+file
+
+
+
+
+2008-04-27T09:12:49.000000Z
+7baedb993d4cfde79ca650c4034c4534
+2007-10-22T07:20:50.857859Z
+123
+jserv
+

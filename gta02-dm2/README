@@ -1,0 +1,59 @@
+== Introduction ==
+
+DM2 (as known as "Diagnosis Module phase 2") is designed for
+resource constrained environments or production testing software
+usage.It depends on oltk in kernel.
+
+== Building ==
+
+For now, you can build with the toolchain from
+
+http://wiki.openmoko.org/wiki/Toolchain
+
+and running the ./build script.  If you have the usb0 device set up
+from Ethernet over USB on GTA02, you can do
+
+./build && remote_install
+
+in order to build and get dm2 and other dependent apps installed on the
+GTA02.
+
+If you change configuration, provoke a reconfigure by deleting the
+Makefile.
+
+== Architecture ==
+
+     +--------------------+
+     |          	  | 	+-------------+
+     |          DM2       |----	| test_script | 
+     |             	  |	+-------------+
+     +--------------------+
+		|
+-------------------------------------------------------------------
+     +--------------------+
+     | widget / component |  (oltk API)
+     +--------+-----------+
+              |
+           +--------------+
+           | gr internals | (low-level graphics)
+           +--------------+
+            /        \   \___
++-------------------+ \      \
+| Linux framebuffer |  \    +--------------------+
++-------------------+  |    | u-boot framebuffer | (proposed)
+                       |    +--------------------+
+                  +-----+
+                  | X11 | (simulated on desktop)
+                  +-----+
+
+== Principle ==
+
+DM2 was excuted by test script through oltk supporting.(oltk was built 
+from scratch with mininal UI implementations in mind.Unlike classical 
+GUI toolkits, oltk adopts "semi-event loop" approach instead of 
+maintaining its own event loop.  The approach is targetted in embedded 
+applications such as u-boot integration.)
+
+== License ==
+
+See the file "COPYING" for details.
