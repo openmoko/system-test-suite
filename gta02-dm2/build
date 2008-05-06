@@ -35,7 +35,7 @@ fi
 
 cd ..
 
-if [ ! -e Makefile ] ; then
+#if [ ! -e Makefile ] ; then
 
 ./autogen.sh
 
@@ -50,7 +50,7 @@ ls $PKG_CONFIG_PATH
 	--disable-shared \
 	CFLAGS="-I$STAGING_DIR/usr/include -L$STAGING_DIR/usr/lib"
 make -s clean 
-fi
+#fi
 
 make -s &&\
 make -s install DESTDIR=`pwd`/staging
