@@ -689,7 +689,7 @@ int Start_Server(void)
             wrterrmsg("bind()");
 
         }
-	return;
+	return TRUE;
     }
 
     /* start listen */

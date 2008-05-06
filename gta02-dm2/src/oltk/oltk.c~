@@ -585,12 +585,14 @@ struct oltk *oltk_new(const char *dev)
 	};
 
 	oltk  = malloc(sizeof(*oltk));
-	if (!oltk)
+	if (!oltk) {
+		printf("oltk_new: OOM\n");
 		return NULL;
-
+	}
 	oltk->gr = gr_open(dev, 1);
 	if (!oltk->gr)
 	{
+		printf("oltk_new: gr_open failed\n");
 		free(oltk);
 
 		return NULL;

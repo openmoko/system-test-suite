@@ -14,7 +14,6 @@ nmea_epoch_end(char * buf512, struct nmea_gga* gga, struct nmea_lor* lor);
 static void do_gps_test(void)
 {
 	char buffer[BUFSIZ + 1];
-	int i;
 	pid_t pid;
 	pid_t ppid;
 	test_t *tests = suites[active_suite].tests;

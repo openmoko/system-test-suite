@@ -24,12 +24,12 @@ static void do_audio_loopback_earmic_speaker_test(void)
 	audio_path(SPEAKER);
 }
 
+#if 0
 static void audio_loopback_speaker(void)
 {
 	audio_path(LOOPBACK_SPEAKER);
 	//audio_play();
 }
-
 static void do_audio_loopback_speaker_test(void)
 {
 
@@ -37,19 +37,19 @@ static void do_audio_loopback_speaker_test(void)
 	countdown(AUDIO_TEST_TIME , TRUE);
 	audio_path(SPEAKER);
 }
-
+#endif
 static void audio_loopback_earphone(void)
 {
 	audio_path(LOOPBACK_EARPHONE);
 	//audio_play();
 }
-
+#if 0
 static void audio_loopback_receiver(void)
 {
 	audio_path(LOOPBACK_RECEIVER);
 	//audio_play();
 }
-
+#endif
 static void do_audio_loopback_earphone_test(void)
 {
 
@@ -58,12 +58,14 @@ static void do_audio_loopback_earphone_test(void)
 	audio_path(SPEAKER);
 }
 
+#if 0
 static void do_audio_loopback_receiver_test(void)
 {
 	do_fork(audio_loopback_receiver);
 	countdown(AUDIO_TEST_TIME , TRUE);
 	audio_path(SPEAKER);
 }
+#endif
 
 static void audio_play_speaker(void)
 {
@@ -91,19 +93,22 @@ static void do_audio_receiver_test(void)
 	countdown(AUDIO_PLAY_TIME , TRUE);
 }
 
+#if 0
 static void audio_play_earphone(void)
 {
 	audio_path(EARPHONE);
 	audio_play();
 }
+#endif
 
+#if 0
 static void do_audio_earphone_test(void)
 {
 
 	do_fork(audio_play_earphone);
 	countdown(AUDIO_TEST_TIME , TRUE);
 }
-
+#endif
 
 test_t audio_tests[] = {
 	{

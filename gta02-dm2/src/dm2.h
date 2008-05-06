@@ -77,9 +77,9 @@
 
 #define BATTERY_VOLTAGE "/sys/bus/i2c/drivers/pcf50633/0-0073/battvolt"
 
-#define RED_LED_DEVICE "/sys/class/leds/gta02-aux\:red/brightness"
-#define ORANGE_LED_DEVICE "/sys/class/leds/gta02-power\:orange/brightness"
-#define BLUE_LED_DEVICE "/sys/class/leds/gta02-power\:blue/brightness"
+#define RED_LED_DEVICE "/sys/class/leds/gta02-aux\\:red/brightness"
+#define ORANGE_LED_DEVICE "/sys/class/leds/gta02-power\\:orange/brightness"
+#define BLUE_LED_DEVICE "/sys/class/leds/gta02-power\\:blue/brightness"
 
 #define VIBRATOR_DEVICE "/sys/class/leds/neo1973\:vibrator/brightness"
 
@@ -189,39 +189,5 @@ extern int n_suites;
 int do_fork(void  *func);
 int countdown(int sec, int avaiable);
 int read_log(char *path, char *buf, int size);
+int set_data(const char* device ,const char* data);
 
-static void do_rgb_test(void);
-static void do_get_time(void);
-static void do_audio_loopback_earmic_speaker_test(void);
-static void do_audio_loopback_speaker_test(void);
-static void do_audio_loopback_earphone_test(void);
-static void do_audio_loopback_receiver_test(void);
-static void do_audio_speaker_test(void);
-static void do_audio_receiver_test(void);
-static void do_audio_earphone_test(void);
-static void do_wifi_on_test(void);
-static void do_wifi_test(void);
-static void do_gps_test(void);
-static void do_gps_cn_test(void);
-static void do_battery_test(void);
-static void do_ac_test(void);
-static void do_suspend_test(void);
-static void do_brightness_test(void);
-static void do_blue_led_test(void);
-static void do_orange_led_test(void);
-static void do_red_led_test(void);
-static void do_key911_test(void);
-static void do_keypower_test(void);
-static void do_vibrator_test(void);
-static void do_gsm_on_test(void);
-static void do_gsm_dial_test(void);
-static void do_bt_on_test(void);
-static void do_bt_scan_test(void);
-static void do_motion_sensor_test(void);
-static void do_log_on_test(void);
-static void do_sd_on_test(void);
-static void do_hdq_test(void);
-static void do_view_version(void);
-static void do_norflash_test(void);
-static void do_sensor_test(void);
-static void do_dl_finalimage_test(void);

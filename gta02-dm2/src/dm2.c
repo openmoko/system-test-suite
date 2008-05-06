@@ -71,117 +71,6 @@ static void sig(int sig)
 	run = 0;
 }
 
-/*Purpose: internal process communication Using pipe(2) */
-
-static int do_pipe(char *string, const char *execution)
-{
-	/*  Define gints arrays to ref pipes */
-	int	stdin_pipe[2];
-	int	stdout_pipe[2];
-	int	stderr_pipe[2];
-
-	/*  Define buffs to copy your reads from the pipes to */
-	char buffer[BUFSIZ+1];
-	char buffer_err[BUFSIZ+1];
-
-	/* Def some vars to hold your results */
-	int fork_result;
-	int data_processed;
-	int data_processed_err;
-
-	/* Clear Your Buffers */
-	memset(buffer, 0, sizeof(buffer));
-	memset(buffer_err, 0, sizeof(buffer_err));
-
-	/* Do the fork and pipe - watch closely here */
-
-	/* Create pipes to read from and write too */
-	if ((pipe(stdin_pipe)) || (pipe(stdout_pipe)) || (pipe(stderr_pipe)))
-		return TRUE;
-	
-	/* Perform the fork */
-	fork_result = fork();
-
-	/* fork attempt was not successful */
-	if (fork_result == -1)
-	{
-		fprintf(stderr, "do_fork Failure\n");
-		exit(EXIT_FAILURE);
-		return FALSE;
-	}
-
-	/*  We're in the child process! */
-	if (fork_result == 0) {
-		/* Close the Child process' STDIN */
-		close(0);
-
-		/* Duplicate the Child's STDIN to the
-			* stdin_pipe file descriptor */
-		dup(stdin_pipe[0]);
-
-		/* Close the read and write to for the pipe for
-			* the child.  The child will now only be able to
-			* read from it's STDIN (which is our pipe). */
-		close(stdin_pipe[0]);
-		close(stdin_pipe[1]);
-
-		/* Close the Child process' STDOUT */
-		close(1);
-		dup(stdout_pipe[1]);
-		close(stdout_pipe[0]);
-		close(stdout_pipe[1]);
-
-		/* Close the Child process' STDERR */
-		close(2);
-		dup(stderr_pipe[1]);
-		close(stderr_pipe[0]);
-		close(stderr_pipe[1]);
-
-		/*  Make the exec call to run the script. */
-		system(execution);
-
-		/*  If console didn't take over the exec call failed. */
-		exit(EXIT_FAILURE);
-	}
-
-	/* Close STDIN for read & write and close
-		* STDERR for write */
-	close(stdin_pipe[0]);
-	close(stdin_pipe[1]);
-	close(stderr_pipe[1]);
-
-	while (1) {
-		data_processed_err = read(stderr_pipe[0],
-						buffer_err, BUFSIZ);
-		if (!data_processed_err)
-			break;
-	}
-	/* Close the read end of STDERR */
-	close(stderr_pipe[0]);
-	/* Close the write end of STDOUT */
-	close(stdout_pipe[1]);
-
-	while(1)
-	{
-		/* Read BUFSIZ of STDOUT data */
-		data_processed=read(stdout_pipe[0],buffer,BUFSIZ);
-
-		/* return the string */
-		if (strlen(buffer) && !data_processed)
-			strcpy(string,buffer);
-			//printf("pipe:%s\n",buffer);
-
-		/* Break this loop when we're read
-			* all of the STDOUT data */
-		if (data_processed == 0)
-			break;
-	}
-
-	/* Close STDOUT for reading */
-	close(stdout_pipe[0]);
-
-	return TRUE;
-}
 
 /* Purpose: excute another process Using fork(2) */
 
@@ -409,73 +298,9 @@ int set_data(const char* device ,const char* data)
 }
 
 
-static void dl_finalimg_test(void)
+void dl_finalimg_test(void)
 {
 	system("dl_finalimg");
-}
-
-static void do_dl_finalimage_test(void)
-{
-	do_fork(dl_finalimg_test);
-/*
-        countdown(90,TRUE);
-
-        if (access("/tmp/kernel-done",R_OK) != 0) {
-                printf("kernel:Fail\n");
-                oltk_view_set_text(view, "Kernel Fail\n");
-                oltk_redraw(oltk);
-        }
-        else {
-		if (access("/tmp/rootfs-done",R_OK) != 0) {
-                	printf("rootfs:Fail\n");
-                	oltk_view_set_text(view, "Kernel Pass\nrootfs Fail\n");
-                	oltk_redraw(oltk);
-	        }
-        	else {
-                	printf("rootfs:Pass\n");
-                	oltk_view_set_text(view, "Kernel Pass\nrootfs Pass\n");
-                	oltk_redraw(oltk);
-		}
-        }
-*/
-        countdown(100, TRUE);
-
-        if (access("/tmp/uboot-done",R_OK)) {
-                printf("uboot:Fail\n");
-                oltk_view_set_text(view, "uboot Fail\n");
-                oltk_redraw(oltk);
-		return;
-        }
-	if (access("/tmp/env-done",R_OK)) {
-		printf("env:Fail\n");
-		oltk_view_set_text(view, "uboot Pass\nenv Fail\n");
-		oltk_redraw(oltk);
-		return;
-	}
-	if (access("/tmp/splash-done",R_OK) != 0) {
-		printf("splash:Fail\n");
-		oltk_view_set_text(view, "uboot Pass\nenv Pass\nsplash Fail\n");
-		oltk_redraw(oltk);
-		return;
-	}
-	if (access("/tmp/kernel-done",R_OK) != 0) {
-		printf("kernel:Fail\n");
-		oltk_view_set_text(view, "uboot Pass\nenv Pass\nsplash Pass\n"
-					 "Kernel Fail\n");
-		oltk_redraw(oltk);
-		return;
-	}
-	if (access("/tmp/rootfs-done",R_OK) != 0) {
-		printf("rootfs:Fail\n");
-		oltk_view_set_text(view, "uboot Pass\nenv Pass\nsplash Pass\n"
-					 "Kernel Pass\nrootfs Fail\n");
-		oltk_redraw(oltk);
-		return;
-	}
-	printf("rootfs:Pass\n");
-	oltk_view_set_text(view, "uboot Pass\nenv Pass\nsplash Pass\n"
-				 "Kernel Pass\nrootfs Pass\n");
-	oltk_redraw(oltk);
 }
 
 
@@ -544,21 +369,21 @@ err:
 	}
 }
 
-static void do_battery_test(void)
+void do_battery_test(void)
 {
 	get_voltage(BATTERY_VOLTAGE,BATTERY);
 	oltk_redraw(oltk);
 
 }
 
-static void do_ac_test(void)
+void do_ac_test(void)
 {
 	get_voltage(BATTERY_VOLTAGE,DC);
 	oltk_redraw(oltk);
 
 }
 
-static void do_suspend_test(void)
+void do_suspend_test(void)
 {
 	oltk_view_set_text(view, "Please Wait 10 seconds to wake up");
 	oltk_redraw(oltk);
@@ -578,7 +403,7 @@ static void do_suspend_test(void)
 
 int set_uart_bautrate(char *device, char *speed)
 {
-	int ret, rate, b_rate = B0;
+	int ret, b_rate = B0;
 
 	/* Confirm device initialized */
 	if (access(device, R_OK) != 0) {
@@ -596,11 +421,11 @@ int set_uart_bautrate(char *device, char *speed)
 
 	ret = tcgetattr(fd, &tio);
 	if (ret < 0)
-		return;	
+		return FALSE;	
 
 	ret = cfsetispeed(&tio, B0);
 	if (ret < 0)
-		return;	
+		return FALSE;	
 
 	switch (atoi(speed)) {
 	case 115200:
@@ -818,7 +643,7 @@ void audio_path(int path)
 
 
 
-static void do_sd_on_test(void)
+void do_sd_on_test(void)
 {
 
 	//do_fork(gprs_on_test);
@@ -880,7 +705,8 @@ static void on_popup_select(struct oltk_popup *pop, int selected, void *data)
 		for (; t->name; t++)
 			oltk_button_show(t->button, 0);
 
-	if (t = suites[selected].tests)
+	t = suites[selected].tests;
+	if (t)
 		for (; t->name; t++)
 			oltk_button_show(t->button, 1);
 
@@ -920,7 +746,6 @@ static void on_yes(struct oltk_button *b, void *data)
 }
 static void on_no(struct oltk_button *b, void *data)
 {
-	int i;
 	printf("test (%d, %d) quit\n", active_suite, active_test);
 
 	oltk_button_show(buttons[BUTTON_YES], 0);
@@ -930,7 +755,6 @@ static void on_no(struct oltk_button *b, void *data)
 }
 static void on_quit(struct oltk_button *b, void *data)
 {
-	int i;
 	printf("test (%d, %d) quit\n", active_suite, active_test);
 
 	quit_check(oltk);

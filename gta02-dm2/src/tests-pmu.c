@@ -52,15 +52,16 @@ static void do_battery_test(void)
 	get_voltage(BATTERY_VOLTAGE,BATTERY);
 	oltk_redraw(oltk);
 }
-
+#if 0
 static void do_ac_test(void)
 {
 	get_voltage(BATTERY_VOLTAGE,DC);
 	oltk_redraw(oltk);
 }
+#endif
 
 extern int brightness_test(int level);
-
+#if 0
 static void do_suspend_test(void)
 {
 	oltk_view_set_text(view, "Please Wait 10 seconds to wake up");
@@ -77,7 +78,7 @@ static void do_suspend_test(void)
 	oltk_redraw(oltk);
 	brightness_test(MAX);
 }
-
+#endif
 static void do_hdq_test(void)
 {
 	static char buffer[BUFSIZ + 1];

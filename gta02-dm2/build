@@ -48,7 +48,7 @@ ls $PKG_CONFIG_PATH
 	--disable-x11 \
 	--enable-static \
 	--disable-shared \
-	CFLAGS="-I$STAGING_DIR/usr/include -L$STAGING_DIR/usr/lib"
+	CFLAGS="-Wall -Werror -I$STAGING_DIR/usr/include -L$STAGING_DIR/usr/lib"
 make -s clean 
 #fi
 

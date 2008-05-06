@@ -37,7 +37,7 @@ err:
 
 static void do_bt_on_test(void)
 {
-	if (!set_data(BT_POWER,"1")){
+	if (!set_data(BT_POWER, "1")){
 		oltk_view_set_text(view,"Fail");
 		oltk_redraw(oltk);
 		return;
@@ -45,7 +45,7 @@ static void do_bt_on_test(void)
 
 	sleep(1);
 
-	if (!set_data(BT_RESET,"0")){
+	if (!set_data(BT_RESET, "0")){
 		oltk_view_set_text(view,"Fail");
 		oltk_redraw(oltk);
 		return;
@@ -68,7 +68,6 @@ static void bt_scan_log(void)
 {
 	static char buffer[BUFSIZ + 1];
 	test_t *tests = suites[active_suite].tests;
-	int i;
 
 	if (access(BT_LOG_PATH,R_OK)) {
 		oltk_view_set_text(view, "Fail\n");

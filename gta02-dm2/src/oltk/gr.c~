@@ -48,8 +48,12 @@ struct gr *gr_open(const char *dev, int nonblock)
 	for (i = 0; i < n_backends; i++)
 	{
 		gr = backends[i]->open(dev, 480, 640, nonblock);
-		if (gr)
+		if (gr) {
+			printf("gr_open: backend %d OK\n", i);
 			break;
+		} else {
+			printf("gr_open: backend %d bad\n", i);
+		}
 	}
 
 	return gr;

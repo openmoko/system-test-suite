@@ -40,9 +40,7 @@
 #define GOT  3
 
 static struct nmea_gga n_gga;
-static struct nmea_rmc n_rmc;
 static struct nmea_gsv n_gsv[GOT];
-static struct nmea_gsa n_gsa;
 static struct nmea_lor n_lor;
 
 static unsigned int msStart;

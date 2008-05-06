@@ -2,6 +2,8 @@
 
 /* from dm2.c */
 extern void do_gsm_log_on_test(void);
+extern int brightness_test(int level);
+
 
 static void do_suspend_test(void)
 {

@@ -5,8 +5,6 @@ extern void audio_path(int path);
 
 static void gsm_dial_test(void)
 {
-	static char buffer[BUFSIZ + 1];
-
 	system("libgsmd-tool -m shell < /home/root/dialout");
 }
 

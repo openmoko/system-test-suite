@@ -15,12 +15,14 @@ static void do_orange_led_test(void)
 
 	while(count)
 	{
-		system("echo \"255\" > /sys/class/leds/gta02-power\\:orange/brightness");
+		system("echo \"255\" > /sys/class/leds/gta02-power\\"
+		       ":orange/brightness");
 		oltk_view_set_text(view, "ON");
 		oltk_redraw(oltk);
 		sleep(1);
 
-		system("echo \"0\" > /sys/class/leds/gta02-power\\:orange/brightness");
+		system("echo \"0\" > /sys/class/leds/gta02-power\\"
+		       ":orange/brightness");
 		oltk_view_set_text(view, "OFF");
 		oltk_redraw(oltk);
 		sleep(1);
@@ -42,12 +44,14 @@ static void do_blue_led_test(void)
 
 	while(count)
 	{
-		system("echo 255 > /sys/class/leds/gta02-power\\:blue/brightness");
+		system("echo 255 > /sys/class/leds/gta02-power\\"
+		       ":blue/brightness");
 		oltk_view_set_text(view, "ON");
 		oltk_redraw(oltk);
 		sleep(1);
 
-		system("echo 0 > /sys/class/leds/gta02-power\\:blue/brightness");
+		system("echo 0 > /sys/class/leds/gta02-power\\"
+		       ":blue/brightness");
 		oltk_view_set_text(view, "OFF");
 		oltk_redraw(oltk);
 		sleep(1);

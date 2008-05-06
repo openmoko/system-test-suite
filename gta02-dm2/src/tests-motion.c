@@ -69,7 +69,6 @@ static int check_sensor(char *buffer)
 static void sensor_log(void)
 {
         static char buffer[BUFSIZ + 1];
-	test_t *tests = suites[active_suite].tests;
 	int i, j, count = 0, suc_cnt = 80;
 	static char buf[5];
 
@@ -180,6 +179,7 @@ static void do_sensor_test(void)
         sensor_log();
 }
 
+#ifdef CURRENTLY_UNUSED
 static void do_motion_sensor_test(void)
 {
 	static char buffer[BUFSIZ + 1];
@@ -216,7 +216,7 @@ err:
 	oltk_view_set_text(view,"Fail");
 	oltk_redraw(oltk);
 }
-
+#endif
 
 
 test_t ms_tests[] = {

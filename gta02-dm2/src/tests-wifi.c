@@ -1,9 +1,11 @@
 #include "dm2.h"
 
+#ifdef CURRENTLY_UNUSED
 static void wifi_test(void)
 {
 	system("/home/root/test_script wifi setSSID &");
 }
+#endif
 
 static void do_wifi_test(void)
 {
