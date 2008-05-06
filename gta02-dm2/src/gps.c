@@ -190,7 +190,7 @@ nmea_epoch_end(char * buf512, struct nmea_gga* gga, struct nmea_lor* lor,
 }
 
 
-extern int table_prn_cn[];
+extern int table_prn_sn[];
 extern int already_beep;
 
 const char* nmea_process2(char *buffer512, char *buf, int *fixed)
@@ -211,13 +211,13 @@ const char* nmea_process2(char *buffer512, char *buf, int *fixed)
 	GPGSV(pbufGSV, &n_gsv[0]);
 
         for (i = 0; i < 32; i++)
-                if (table_prn_cn[i] > 35) {
+                if (table_prn_sn[i] > 35) {
                         if (!already_beep ) {
 				system("alsactl -f /etc/play_wav_speaker.state restore");
             		        system("aplay /usr/share/dm2/bru93q_7s.wav");
                                 already_beep = 1;
                         }
-                        p += sprintf(p, "prn: %d, C/N: %d\n", i, table_prn_cn[i]);
+                        p += sprintf(p, "prn: %d, S/N: %d\n", i, table_prn_sn[i]);
                         hit_count++;
                 }
 

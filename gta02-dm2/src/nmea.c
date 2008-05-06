@@ -72,7 +72,7 @@ int GPGGA(char* str, struct nmea_gga* gga)
     return 0;
 }
 
-int table_prn_cn[32];
+int table_prn_sn[32];
 
 int GPGSV(char* str, struct nmea_gsv* gsv)
 {
@@ -118,7 +118,7 @@ int GPGSV(char* str, struct nmea_gsv* gsv)
                 int prn = atoi(gsv->sate[j][0]);
                 int el  = atoi(gsv->sate[j][1]);
                 int az  = atoi(gsv->sate[j][2]);
-                int CN0 = atoi(gsv->sate[j][3]);
+                int SN0 = atoi(gsv->sate[j][3]);
 
                 // printf("%d) %s %s %s %s\n",
                 //         j,
@@ -128,13 +128,13 @@ int GPGSV(char* str, struct nmea_gsv* gsv)
 			break;
 		if (prn > 32)
 			break;
-		if (CN0 >= 3120)
+		if (SN0 >= 3120)
 			break;
 
-                 printf("%d) prn %d  el %d  az %d  CN %d\n",
-                             j, prn, el, az, CN0);
-		 table_prn_cn[prn] = CN0;
-               // page_SS_have_prn(prn, CN0, el, az);
+                 printf("%d) prn %d  el %d  az %d  S/N %d\n",
+                             j, prn, el, az, SN0);
+		 table_prn_sn[prn] = SN0;
+               // page_SS_have_prn(prn, SN0, el, az);
 		 
 
                 k = 0;                  // Start over with the

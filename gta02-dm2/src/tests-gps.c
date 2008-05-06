@@ -3,7 +3,7 @@
 
 /* from dm2.c */
 extern int set_uart_bautrate(char *device, char *speed);
-extern void gps_reset(char c);
+extern void gps_reset(int fd, char c);
 extern int set_data(const char* device ,const char* data);
 
 /*gps.c */
@@ -19,19 +19,15 @@ static void do_gps_test(void)
 	pid_t ppid;
 	test_t *tests = suites[active_suite].tests;
 	char agps_nema_data[512];
-	FILE *fp = fopen(GPS_DEVICE, "r");
+	FILE *fp;
 	struct nmea_gga gga;
 	struct nmea_lor n_lor;
 	struct nmea_zda zda;
+	int fd;
 
 	resu = 0;
 	fixed = 0;
 	memset(&zda, 0, sizeof(struct nmea_zda));
-
-	if (!fp) {
-		sprintf(buffer, "unable to open %s", GPS_DEVICE);
-		goto err;
-	}
 
 	/* bring GPS power down 1s and then leave up for test */
 
@@ -47,13 +43,20 @@ static void do_gps_test(void)
 		goto err;
 	}
 
-	if (!set_uart_bautrate(GPS_DEVICE, "9600")) {
+	fd = set_uart_bautrate(GPS_DEVICE, "9600");
+	if (!fd) {
 		strcpy(buffer,"Fail");
 		//     goto err;
 	}
 
-	gps_reset('c');
+	gps_reset(fd, 'c');
 	close(fd);
+
+	fp = fopen(GPS_DEVICE, "r");
+	if (!fp) {
+		sprintf(buffer, "unable to open %s", GPS_DEVICE);
+		goto err;
+	}
 //	countdown(1, TRUE);
 
 	oltk_view_set_text(view, "GPS Go");

@@ -30,7 +30,6 @@ struct oltk_view *view;
 
 int xres, yres;
 int run;
-int fd;
 int fixed = 0;
 int resu = 0;
 
@@ -52,7 +51,7 @@ test_suite suites[] = {
 	{ "GPS",	"Find out the Fixed time!!\n",	 	 gps_tests },		
 	{ "GSM ",     	"Check the GSM status\n",     	 	 gsm_tests },
 	{ "WiFi",	"Check the Wifi status!!\n",    	 wifi_tests },
-	{ "CN",    	"Check the  GPS CN!!\n", 	 	 cn_tests },
+	{ "SN",    	"Check the  GPS SN!!\n", 	 	 sn_tests },
 	{ "DM2",     	"Save DM2 log to PC\n",     		 log_tests_2 },
 
 };
@@ -247,9 +246,7 @@ static void on_fail(struct oltk_button *b, void *data)
 
 int countdown(int sec, int avaiable)
 {
-	while (sec)
-	{
-		sec--;
+	while (sec--) {
 
 		if (avaiable) {	
 			char buf[10] = { '\0' };
@@ -403,13 +400,13 @@ void do_suspend_test(void)
 
 int set_uart_bautrate(char *device, char *speed)
 {
-	int ret, b_rate = B0;
+	int ret, b_rate = B0, fd;
 
 	/* Confirm device initialized */
-	if (access(device, R_OK) != 0) {
+	if (access(device, R_OK)) {
 		oltk_view_set_text(view, "Fail\n");
 		oltk_redraw(oltk);
-		return FALSE;
+		return 0;
 	}
 
 	fd = open(device, O_RDWR);
@@ -421,11 +418,11 @@ int set_uart_bautrate(char *device, char *speed)
 
 	ret = tcgetattr(fd, &tio);
 	if (ret < 0)
-		return FALSE;	
+		return 0;	
 
 	ret = cfsetispeed(&tio, B0);
 	if (ret < 0)
-		return FALSE;	
+		return 0;	
 
 	switch (atoi(speed)) {
 	case 115200:
@@ -465,7 +462,7 @@ int set_uart_bautrate(char *device, char *speed)
 
 	tcsetattr(fd, TCSANOW, &tio);
 
-	return TRUE;    
+	return fd;    
 }
 
 //------------------------------------------------------------------------------
@@ -492,7 +489,7 @@ static ssize_t bwrite(int fd, const void *buf, size_t count, int delay)
 	return i;
 }
 
-static void gllin_ubx(char cls, char id, const unsigned char *ubx, int size, int delay)
+static void gllin_ubx(int fd, char cls, char id, const unsigned char *ubx, int size, int delay)
 {
 	unsigned char header[6], checksum[2];
 	int i;
@@ -550,7 +547,7 @@ fail:
 	printf("ubx failed\n");
 }
 
-void gps_reset(char c)
+void gps_reset(int fd, char c)
 {
 	unsigned char ubx[4];
 	int bbr;
@@ -573,31 +570,12 @@ void gps_reset(char c)
 	ubx[2] = 0x8; /* stop GPS */
 	ubx[3] = 0x0;
 
-	gllin_ubx(0x06, 0x04, ubx, 4, 4);
+	gllin_ubx(fd, 0x06, 0x04, ubx, 4, 4);
 
 	sleep(2);
 
 	ubx[2] = 0x9; /* start GPS */
-	gllin_ubx(0x06, 0x04, ubx, 4, 4);
-
-	/* turn off antenna short / open detect */
-
-	ubx[0] = 1;
-	ubx[1] = 0;
-	ubx[2] = 0;
-	ubx[3] = 0;
-
-	gllin_ubx(0x06, 0x13, ubx, 4, 4);
-
-	/* turn off antenna short / open detect */
-
-	ubx[0] = 0;
-	ubx[1] = 0;
-	ubx[2] = 0;
-	ubx[3] = 0;
-
-	gllin_ubx(0x06, 0x13, ubx, 0, 40);
-
+	gllin_ubx(fd, 0x06, 0x04, ubx, 4, 4);
 }
 
 

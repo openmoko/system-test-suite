@@ -1,42 +1,44 @@
 #include "dm2.h"
+#include "nmea.h"
 
-extern int table_prn_cn[];
+extern int table_prn_sn[];
 int already_beep;
 
 /* from dm2.c */
 int set_uart_bautrate(char *device, char *speed);
-void gps_reset(char c);
+void gps_reset(int fd, char c);
 int set_data(const char* device ,const char* data);
 
 
-static int get_gps_cn_data(char* device, char * buf, int size)
+static int get_gps_sn_data(FILE *fp, char * buf, int size)
 {
-	FILE *fp;
 	int fixed1 = 0;
-	int chars_read = 0;
-	char temp[64];
+	char temp[256];
 
-	fp = fopen(device, "r");
+	*buf = '\0';
 
 	if (!fp) {
 		snprintf(buf, size, "[ERROR]Fail to open device interface!\n");
 		printf("%s\n", buf);
 		return !fixed1;
 	}
-	chars_read = fread(temp, 1, sizeof(temp), fp);
-	if (chars_read > 0)
-		nmea_process2(buf, temp, &fixed1);
-	else
-		sprintf(buf, "[ERROR]Fail to read NMEA 0813 Messages!\n");
 
-	printf("Translator:%s\n",buf);
-	fclose(fp);
+	if (!fgets(temp, sizeof(temp), fp)) {
+		sprintf(buf, "[ERROR]Fail to read NMEA 0813 Messages!\n");
+		return fixed1;
+	}
+
+	if (strncmp(temp, GSV_SENTENCE_ID, 6))
+		return 0;
+
+	nmea_process2(buf, temp, &fixed1);
+	printf("Translator: %s\n",buf);
 
 	return fixed1;
 }
 
 
-static void do_gps_cn_test(void)
+static void do_gps_sn_test(void)
 {
 	char buffer[BUFSIZ + 1];
 	int i;
@@ -44,15 +46,25 @@ static void do_gps_cn_test(void)
 	pid_t ppid;
 	fixed = 0;
 	test_t *tests = suites[active_suite].tests;
+	int fd;
 
-	if (!set_data(GPS_POWER,"0")) {
+	if (!set_data(GPS_POWER, "0")) {
 		strcpy(buffer,"Fail");
 		goto err;
 	}
 
-	sleep(10);
+	sleep(1);
 
-	if (!set_data(GPS_POWER,"1")) {
+	fd = set_uart_bautrate(GPS_DEVICE, "9600");
+	if (!fd){
+		strcpy(buffer,"Fail");
+		goto err;
+	}
+
+
+	/* huh we power it up then put it in shielding box? */
+
+	if (!set_data(GPS_POWER, "1")) {
 		strcpy(buffer,"Fail");
 		goto err;
 	}
@@ -63,17 +75,11 @@ static void do_gps_cn_test(void)
 
 	countdown(5, TRUE);
 
-	/* Cold Start */
-	if (!set_uart_bautrate(GPS_DEVICE,"9600")){
-		strcpy(buffer,"Fail");
-		goto err;
-	}
-
-	gps_reset('c');
+	gps_reset(fd, 'c');
 
 	close(fd);
 
-	countdown(1,FALSE);
+	countdown(1, FALSE);
 
 	oltk_view_set_text(view, "GPS Go");
 	oltk_redraw(oltk);
@@ -84,26 +90,27 @@ static void do_gps_cn_test(void)
 	runtime_init();
 
 	for (i = 0; i < 32; i++)
-		table_prn_cn[i] = -1;
+		table_prn_sn[i] = -1;
 
 	if ((pid = fork())) {
+		FILE *fp = fopen(GPS_DEVICE, "r");
+
                 while (1) {
-                        fixed = get_gps_cn_data(GPS_DEVICE, buffer, BUFSIZ);
-
-                        printf("fixed:%d\n",fixed);
-
+                        fixed = get_gps_sn_data(fp, buffer, BUFSIZ);
                         if (strlen(buffer)) {
+				printf("fixed:%d\n",fixed);
                                 oltk_view_set_text(view, buffer);
                                 oltk_redraw(oltk);
 
 				if (fixed) {
+					fclose(fp);
 					kill(pid, SIGKILL);
 					return;
 				}
                         }
                 }
         } else {
-		sleep(GPS_CNTEST_TIME);
+		sleep(GPS_SNTEST_TIME);
                 printf("\ntime out\n");
                 if (!fixed) {
                         //strcpy(buffer, "fail");
@@ -127,10 +134,10 @@ err:
 
 
 
-test_t cn_tests[] = {
+test_t sn_tests[] = {
 	{
-		"CN",
-		do_gps_cn_test,
+		"SN",
+		do_gps_sn_test,
 		FALSE,
 		NULL,
 		NULL

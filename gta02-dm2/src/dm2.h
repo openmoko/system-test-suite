@@ -39,7 +39,7 @@
 #define VIBRATOR_TEST_TIME 3 /*(KEY_TEST_TIME) */
 
 #define GPS_TEST_TIME 75 /* 45 */
-#define GPS_CNTEST_TIME 25
+#define GPS_SNTEST_TIME 25
 
 #define BT_ON_TEST_TIME 2
 #define BT_TEST_TIME 20
@@ -151,7 +151,7 @@ extern test_t led_tests[];
 extern test_t audio_tests[];
 extern test_t lcm_tests[];
 extern test_t ms_tests[];
-extern test_t cn_tests[];
+extern test_t sn_tests[];
 extern test_t key_tests[];
 extern test_t gps_tests[];
 extern test_t bt_tests[];
@@ -175,7 +175,6 @@ extern struct oltk_view *view;
 
 extern int xres, yres;
 extern int run;
-extern int fd;
 extern int fixed;
 extern int resu;
 

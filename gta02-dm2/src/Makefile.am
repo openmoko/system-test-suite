@@ -24,7 +24,7 @@ dm2_bin_SOURCES = \
 	tests-audio.c \
 	tests-lcm.c \
 	tests-motion.c \
-	tests-cn.c \
+	tests-sn.c \
 	tests-keys.c \
 	tests-gps.c \
 	tests-bluetooth.c \
