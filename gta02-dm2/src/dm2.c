@@ -755,44 +755,24 @@ void gps_reset(char c)
 	ubx[2] = 0x9; /* start GPS */
 	gllin_ubx(0x06, 0x04, ubx, 4, 4);
 
-}
+	/* turn off antenna short / open detect */
 
-int get_gps_data(char* device, char* buf)
-{
-	FILE *fp;
-	int fixed1 ;
-	int len = 0;
+	ubx[0] = 1;
+	ubx[1] = 0;
+	ubx[2] = 0;
+	ubx[3] = 0;
 
-	static char temp[64+1];
+	gllin_ubx(0x06, 0x13, ubx, 4, 4);
 
-	fp = fopen(device, "r");
+	/* turn off antenna short / open detect */
 
-	memset(temp, 0, sizeof(temp));
+	ubx[0] = 0;
+	ubx[1] = 0;
+	ubx[2] = 0;
+	ubx[3] = 0;
 
-	if (NULL != fp) {
-		len = fread(temp, sizeof(char), 64, fp);
+	gllin_ubx(0x06, 0x13, ubx, 0, 40);
 
-		if (len > 0) {
-			const char *agps_nema_data = agps_nmea_process(temp,
-								       &fixed1);
-			if (agps_nema_data)
-				sprintf(buf, agps_nema_data);		
-		} 
-		else
-			sprintf(buf,"[ERROR]Fail to read NEAM 0813 Messages!\n");
-
-		//printf("Translator:%s\n",buf);
-		fclose(fp);	  
-
-		return fixed1;
-
-	} else {
-		sprintf(buf,"[ERROR]Fail to open device interface!\n");
-
-		//printf("%s",buf);
-		return 0;
-
-	}
 }
 
 

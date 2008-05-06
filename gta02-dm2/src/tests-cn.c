@@ -9,29 +9,24 @@ void gps_reset(char c);
 int set_data(const char* device ,const char* data);
 
 
-static int get_gps_cn_data(char* device,char * buf, int size)
+static int get_gps_cn_data(char* device, char * buf, int size)
 {
 	FILE *fp;
 	int fixed1 = 0;
 	int chars_read = 0;
-
-	char temp[64 + 1];
+	char temp[64];
 
 	fp = fopen(device, "r");
-
-	//printf("open:%s\n",device);
 
 	if (!fp) {
 		snprintf(buf, size, "[ERROR]Fail to open device interface!\n");
 		printf("%s\n", buf);
 		return !fixed1;
 	}
-	chars_read = fread(temp, sizeof(char), 64, fp);
-	if (chars_read > 0) {
-		const char* agps_nema_data = agps_nmea_process2(temp, &fixed1);
-		if (agps_nema_data)
-			sprintf(buf,agps_nema_data);
-	} else
+	chars_read = fread(temp, 1, sizeof(temp), fp);
+	if (chars_read > 0)
+		nmea_process2(buf, temp, &fixed1);
+	else
 		sprintf(buf, "[ERROR]Fail to read NMEA 0813 Messages!\n");
 
 	printf("Translator:%s\n",buf);

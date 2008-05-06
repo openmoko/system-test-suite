@@ -1,59 +1,69 @@
 #include "dm2.h"
+#include "nmea.h"
 
 /* from dm2.c */
 extern int set_uart_bautrate(char *device, char *speed);
 extern void gps_reset(char c);
 extern int set_data(const char* device ,const char* data);
-extern int get_gps_data(char* device,char* buf);
+
+/*gps.c */
+const char*
+nmea_epoch_end(char * buf512, struct nmea_gga* gga, struct nmea_lor* lor);
+
 
 static void do_gps_test(void)
 {
 	char buffer[BUFSIZ + 1];
-	int i;//,fixed;
-	resu = 0;
-	fixed = 0;
+	int i;
 	pid_t pid;
 	pid_t ppid;
 	test_t *tests = suites[active_suite].tests;
+	char agps_nema_data[512];
+	FILE *fp = fopen(GPS_DEVICE, "r");
 
-	if (!set_data(GPS_POWER,"0")){
+	resu = 0;
+	fixed = 0;
+
+	if (!fp) {
+		sprintf(buffer, "unable to open %s", GPS_DEVICE);
+		goto err;
+	}
+
+	/* bring GPS power down 1s and then leave up for test */
+
+	if (!set_data(GPS_POWER, "0")) {
 		strcpy(buffer,"Fail");
 		goto err;
 	}
 
-	countdown(5, FALSE);
+	countdown(1, FALSE);
 
-	if (!set_data(GPS_POWER,"1")) {
-		strcpy(buffer,"Fail");
+	if (!set_data(GPS_POWER, "1")) {
+		strcpy(buffer, "Fail");
 		goto err;
 	}
 
-	if (!set_uart_bautrate(GPS_DEVICE,"9600")) {
+	if (!set_uart_bautrate(GPS_DEVICE, "9600")) {
 		strcpy(buffer,"Fail");
 		//     goto err;
 	}
 
 	gps_reset('c');
-
 	close(fd);
-#if 1
-	countdown(1, TRUE);
+//	countdown(1, TRUE);
 
 	oltk_view_set_text(view, "GPS Go");
 	oltk_redraw(oltk);
 
-	//printf("GPS Go\n");
-
 	runtime_init();
 
-	memset(buffer, 0, sizeof(buffer));
-
-	if ( !(pid = fork()) ) {
+	if (!(pid = fork())) {
 
 		sleep(GPS_TEST_TIME);
 		printf("\ntime out\n");
 
 		if ( !fixed ) {
+			fclose(fp);
 		//	strcpy(buffer, "fail");
 			printf("\ngps fail\n");
 			resu = 1;
@@ -63,42 +73,44 @@ static void do_gps_test(void)
 		}
 	}
 
-	while (1) {
-		fixed = get_gps_data(GPS_DEVICE, buffer);
-		printf("fixed:%d\n",fixed);
+	while (!fixed) {
+		struct nmea_gga gga;
+		struct nmea_lor n_lor;
 
-		if (!strlen(buffer))
-			continue;
-
-		if (!fixed) {
-			oltk_view_set_text(view, buffer);
-			oltk_redraw(oltk);
+		if (!fgets(buffer, sizeof(buffer), fp)) {
+			strcpy(buffer, "read error on gps");
+			goto err;
 		}
 
-		/* FIXME: huh what is 520? */
-		if (fixed && fixed != 520) {
-			//break;
-			printf("info :%s\n", buffer);
+		puts(buffer);
 
-			oltk_view_set_text(view, buffer);
+		if (strncmp(buffer, "$GPGGA", 6))
+			continue;
+
+		GPGGA(buffer, &gga);
+		fixed = atoi(gga.fix_quality);
+
+		nmea_epoch_end(agps_nema_data, &gga, &n_lor);
+
+		if (!fixed) {
+			oltk_view_set_text(view, agps_nema_data);
 			oltk_redraw(oltk);
-			kill(pid, SIGKILL);
-			return;
 		}
 	}
 
-	return ;
-	/*
-	   if (!set_data(GPS_POWER,"0")){
-	   strcpy(buffer,"Fail");
-	   }*/
+	printf("info :%s\n", agps_nema_data);
+	oltk_view_set_text(view, agps_nema_data);
+	oltk_redraw(oltk);
+	kill(pid, SIGKILL);
+	goto bail;
 
 err:
 	oltk_view_set_text(view, buffer);
 	oltk_redraw(oltk);
-	tests[active_test].log=buffer;
+	tests[active_test].log = buffer;
 
-#endif
+bail:
+	fclose(fp);
 }
 
 

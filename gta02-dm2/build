@@ -36,7 +36,7 @@ fi
 cd ..
 
 #if [ ! -e Makefile ] ; then
-
+echo "# reconfiguring"
 ./autogen.sh
 
 export PKG_CONFIG_PATH="$STAGING_DIR/usr/lib/pkgconfig/"
@@ -52,7 +52,7 @@ ls $PKG_CONFIG_PATH
 make -s clean 
 #fi
 
-make -s &&\
+make &&\
 make -s install DESTDIR=`pwd`/staging
 
 # override ts.conf

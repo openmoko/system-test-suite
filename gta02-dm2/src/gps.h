@@ -30,8 +30,8 @@ extern "C" {
 #define FALSE (0)
 
 void runtime_init();
-const char* agps_nmea_process(char* buf, int* fixed);
-const char* agps_nmea_process2(char* buf, int* fixed);
+const char* agps_nmea_process(char *buffer512, char* buf, int* fixed);
+const char* agps_nmea_process2(char *buffer512, char* buf, int* fixed);
 
 #ifdef __cplusplus
 }

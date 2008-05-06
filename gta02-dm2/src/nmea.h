@@ -22,11 +22,12 @@
 #ifndef NMEA_H_
 #define NMEA_H_
 
-#define GGA "$GPGGA"
-#define RMC "$GPRMC"
-#define GSV "$GPGSV"
-#define GSA "$GPGSA"
-#define LOR "$PGLOR"
+#define GGA_SENTENCE_ID "$GPGGA"
+#define RMC_SENTENCE_ID "$GPRMC"
+#define GSV_SENTENCE_ID "$GPGSV"
+#define GSA_SENTENCE_ID "$GPGSA"
+#define LOR_SENTENCE_ID "$PGLOR"
+#define ZDA_SENTENCE_ID "$GPZDA"
 
 struct nmea_gga {
 	char sentence[8];
