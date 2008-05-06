@@ -38,10 +38,7 @@
 #include "gps.h"
 
 #define GOT  3
-
-static struct nmea_gga n_gga;
 static struct nmea_gsv n_gsv[GOT];
-static struct nmea_lor n_lor;
 
 static unsigned int msStart;
 static unsigned long fix_sec;
@@ -77,10 +74,15 @@ int fix_fail  = 0;
 int fix_total = 0;
 
 const char*
-nmea_epoch_end(char * buf512, struct nmea_gga* gga, struct nmea_lor* lor)
+nmea_epoch_end(char * buf512, struct nmea_gga* gga, struct nmea_lor* lor,
+		struct nmea_zda *zda)
 {
     char *p = buf512;
     int nquallity = atoi(gga->fix_quality);
+	static const char * months[] = {
+		"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+		"Oct", "Nov", "Dec"
+	};
 
     // TODO:  Report more info
     //        Be smarter about calling this procedure
@@ -134,6 +136,12 @@ nmea_epoch_end(char * buf512, struct nmea_gga* gga, struct nmea_lor* lor)
     else
         p += sprintf(p, "       UTC: -\n");
 
+	if (zda->valid)
+		p += sprintf(p, "       Date: %2d-%s-%04d\n",
+				zda->day, months[zda->month], zda->year);
+	else
+		p += sprintf(p, "       Date:\n");
+
     if (gga->latitude[0] && gga->longitude[0]) {
         float lat;
         float lon;
@@ -181,29 +189,6 @@ nmea_epoch_end(char * buf512, struct nmea_gga* gga, struct nmea_lor* lor)
     return buf512;
 }
 
-//-------------------------------------------------------------------------------------
-//
-//      agps_nmea_process_()
-//
-//      Process the NMEA sentences.
-//
-//-------------------------------------------------------------------------------------
-
-const char* agps_nmea_process(char *buffer512, char* buf, int* fixed)
-{
-	char *result = strstr(buf, GGA_SENTENCE_ID);
-	
-	if (!result) {
-		fixed = 0;
-		return NULL;
-	}
-
-	memset(&n_gga, 0, sizeof(struct nmea_gga));
-	GPGGA(result, &n_gga);
-	*fixed = atoi(n_gga.fix_quality);
-
-	return nmea_epoch_end(buffer512, &n_gga, &n_lor);
-}	
 
 extern int table_prn_cn[];
 extern int already_beep;

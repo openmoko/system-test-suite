@@ -8,7 +8,8 @@ extern int set_data(const char* device ,const char* data);
 
 /*gps.c */
 const char*
-nmea_epoch_end(char * buf512, struct nmea_gga* gga, struct nmea_lor* lor);
+nmea_epoch_end(char * buf512, struct nmea_gga *gga, struct nmea_lor *lor,
+		struct nmea_zda *zda);
 
 
 static void do_gps_test(void)
@@ -19,9 +20,13 @@ static void do_gps_test(void)
 	test_t *tests = suites[active_suite].tests;
 	char agps_nema_data[512];
 	FILE *fp = fopen(GPS_DEVICE, "r");
+	struct nmea_gga gga;
+	struct nmea_lor n_lor;
+	struct nmea_zda zda;
 
 	resu = 0;
 	fixed = 0;
+	memset(&zda, 0, sizeof(struct nmea_zda));
 
 	if (!fp) {
 		sprintf(buffer, "unable to open %s", GPS_DEVICE);
@@ -73,9 +78,6 @@ static void do_gps_test(void)
 	}
 
 	while (!fixed) {
-		struct nmea_gga gga;
-		struct nmea_lor n_lor;
-
 		if (!fgets(buffer, sizeof(buffer), fp)) {
 			strcpy(buffer, "read error on gps");
 			goto err;
@@ -83,18 +85,20 @@ static void do_gps_test(void)
 
 		puts(buffer);
 
-		if (strncmp(buffer, "$GPGGA", 6))
-			continue;
-
-		GPGGA(buffer, &gga);
-		fixed = atoi(gga.fix_quality);
-
-		nmea_epoch_end(agps_nema_data, &gga, &n_lor);
-
-		if (!fixed) {
-			oltk_view_set_text(view, agps_nema_data);
-			oltk_redraw(oltk);
+		if (!strncmp(buffer, GGA_SENTENCE_ID, 6)) {
+			GPGGA(buffer, &gga);
+			fixed = atoi(gga.fix_quality);
+			nmea_epoch_end(agps_nema_data, &gga, &n_lor, &zda);
+			/* we stop updating the display if we feel we had a fix */
+			if (!fixed) {
+				oltk_view_set_text(view, agps_nema_data);
+				oltk_redraw(oltk);
+			}
 		}
+
+		if (!strncmp(buffer, ZDA_SENTENCE_ID, 6))
+			nmea_to_ZDA(buffer, &zda); /* update next second, never mind */
+
 	}
 
 	printf("info :%s\n", agps_nema_data);

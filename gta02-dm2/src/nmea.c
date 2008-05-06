@@ -209,6 +209,19 @@ int GPGSA(char* str, struct nmea_gsa* gsa)
     return 0;
 }
 
+int nmea_to_ZDA(char* str, struct nmea_zda* zda)
+{
+	float ds;
+	if (sscanf(str, "$GPZDA,%f,%d,%d,%d,%d,%d*", &ds,
+			&zda->day, &zda->month, &zda->year, &zda->tz_adj_hours,
+			&zda->tz_adj_mins) != 6)
+		return 1;
+	zda->valid = 1;
+	zda->seconds = (long)ds;
+	return 0;
+}
+
+
 //void page_stats_fix_time(float ft);
 
 int PGLOR_FIX(char* str, struct nmea_lor* lor)

@@ -81,6 +81,17 @@ struct nmea_lor {
 	char igr[80*5];
 };
 
+struct nmea_zda {
+	int valid;
+	unsigned long seconds;
+	int day;
+	int month;
+	int year;
+	int tz_adj_hours;
+	int tz_adj_mins;
+};
+
+
 int GPGGA(char* str, struct nmea_gga* gga);
 int GPGSV(char* str, struct nmea_gsv* gsv);
 int GPGSA(char* str, struct nmea_gsa* gsa);
@@ -88,5 +99,6 @@ int GPRMC(char* str, struct nmea_rmc* rmc);
 int PGLOR_IGR(char* str, struct nmea_lor* lor);
 int PGLOR_RID(char* str, struct nmea_lor* lor);
 int PGLOR_FIX(char* str, struct nmea_lor* lor);
+int nmea_to_ZDA(char* str, struct nmea_zda* zda);
 
 #endif
