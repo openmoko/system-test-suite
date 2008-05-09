@@ -1,5 +1,13 @@
 #include "dm2.h"
 
+/* how many Z samples to look at, and how many have to be in limit to pass */
+#define SAMPLES_CHECKED 80
+#define IN_LIMIT_REQUIRED 78
+
+/* sensor granularity is 18mG, so this is +/- 18 steps */
+#define LOWER_LIMIT (1000 - (18 * 20))
+#define UPPER_LIMIT (1000 + (18 * 20))
+
 static void sensor1_test(void)
 {
 	system("hexdump /dev/input/event2 | "
@@ -14,64 +22,54 @@ static void sensor2_test(void)
 	       "cut -d' ' -f8 > /tmp/lis302_log2");
 }
 
-static int check_sensor(char *buffer)
+
+static int validate_log(const char * log_filepath)
 {
-	/* FIXME: convert hex -> dec then range check */
-	if (strstr(buffer,"038")==NULL) {
-		if (strstr(buffer,"039")==NULL){
-			if (strstr(buffer,"03a")==NULL){
-				if (strstr(buffer,"03b")==NULL){
-					if (strstr(buffer,"03c")==NULL){
-						if (strstr(buffer,"03d")==NULL){
-							if (strstr(buffer,"03e")==NULL){
-								if (strstr(buffer,"037")==NULL){
-									if (strstr(buffer,"03f0")==NULL){
-										if (strstr(buffer,"03f1")==NULL){
-											if (strstr(buffer,"03f2")==NULL)
-												return 0;
-											else
-												return 1;
-										}
-										else
-											return 1;
-									}
-									else
-										return 1;
-								}
-								else
-									return 1;
-							}
-							else
-								return 1;
-						}
-						else
-							return 1;
-					}
-					else
-						return 1;
-				}
-				else
-					return 1;
-			}
-			else
-				return 1;
-		}
-		else
-			return 1;
+	int i, count = 0;
+	char buf[128];
+	FILE *fp;
+	short s;
+	int n;
+
+	fp = fopen(log_filepath, "r");
+	if (!fp) {
+                oltk_view_set_text(view, "Fail1a\n");
+		count  = -1;
+                goto bail;
 	}
-	else
-		return 1;
+
+	printf("checking %s\n", log_filepath);
+
+	for (i = 0; i < SAMPLES_CHECKED; i ++) {
+
+		if (fgets(buf, sizeof(buf), fp) == NULL) {
+			oltk_view_set_text(view, "Fail1b\n");
+			count  = -1;
+			goto bail;
+		}
+
+		if (sscanf(buf, "%x", &n) == 1) {
+
+			/* s16 -> s32 */
+			s = n;
+			n = s;
+
+			if ((n < LOWER_LIMIT) || (n > UPPER_LIMIT))
+				printf("error : buf = %s / %d\n", buf, n);
+			else
+				count++;
+		}
+	}
+
+bail:
+	oltk_redraw(oltk);
+	fclose(fp);
+
+	return count;
 }
-
-
-
 
 static void sensor_log(void)
 {
-        static char buffer[BUFSIZ + 1];
-	int i, j, count = 0, suc_cnt = 80;
-	static char buf[5];
-
         if (access("/tmp/lis302_log1", R_OK) ||
 	    access("/tmp/lis302_log2", R_OK)) {
                 oltk_view_set_text(view, "Fail1\n");
@@ -79,70 +77,15 @@ static void sensor_log(void)
                 return;
         }
 
-        memset(buffer, 0, sizeof(buffer));
-
-        read_log("/tmp/lis302_log1",buffer,BUFSIZ);
-//        printf("motion sensor1:\n%s\n",buffer);
-	printf("sensor1\n");
-
-        if (!strlen(buffer))
-                goto err;
-
-	count = 0;
-	for (i = 0; i < strlen(buffer); i += 5) {
-		memset(buf, 0, sizeof(buf));
-		for (j = 0; j < 5; j++)
-			buf[j] = buffer[i+j];
-		buf[4] = 0;
-
-		if (check_sensor(buf))
-			count++;
-		else
-			printf("error : buf = %s\n", buf);
-	}
-
-	printf("count = %d\n", count);
-
-	if (count > suc_cnt)
-		goto sensor2;
-	else
+	if (validate_log("/tmp/lis302_log1") < IN_LIMIT_REQUIRED)
 		goto err1;
 
-sensor2:
-	printf("Top sensor OK\n");
-
-        memset(buffer, 0, sizeof(buffer));
-
-        read_log("/tmp/lis302_log2",buffer,BUFSIZ);
-//	printf("motion sensor2:\n%s\n",buffer);
-	printf("sensor2\n");
-
-        if (!strlen(buffer))
-                goto err;
-
-	count = 0;
-	for (i = 0; i < strlen(buffer); i += 5) {
-		memset(buf, 0, sizeof(buf));
-		for (j = 0; j < 5; j++)
-			buf[j] = buffer[i+j];
-		buf[4] = 0;
-	//	printf("buf = %s\n", buf);
-
-		if (check_sensor(buf))
-			count++;
-		else
-			printf("error : buf = %s\n", buf);
-	}
-	printf("count = %d\n", count);
-
-	if (count > suc_cnt)
-		goto pass;
-	else
+	if (validate_log("/tmp/lis302_log2") < IN_LIMIT_REQUIRED)
 		goto err2;
 
-err:
-        oltk_view_set_text(view,"Fail");
-        oltk_redraw(oltk);
+	oltk_view_set_text(view, "Pass");
+	oltk_redraw(oltk);
+	printf("Bottom sensor OK\n");
 	return;
 
 err1:
@@ -153,13 +96,6 @@ err1:
 err2:
 	oltk_view_set_text(view,"Bottom Sensor Fail");
 	oltk_redraw(oltk);
-	return;
-
-pass:
-	oltk_view_set_text(view, "Pass");
-	oltk_redraw(oltk);
-	printf("Bottom sensor OK\n");
-	return;
 }
 
 
