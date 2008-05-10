@@ -55,16 +55,31 @@ make -s clean
 make &&\
 make -s install DESTDIR=`pwd`/staging
 
+mkdir -p staging/etc
+
 # override ts.conf
 cp om-dm2-ts.conf staging/etc/ts.conf
 
 # include data dir
-cp data/*.state staging/etc
+cp data/*.state data/pointercal staging/etc
 
-# test_script
+# initscript
+mkdir -p staging/etc/rcS.d
+cp data/S99dm2 staging/etc/rcS.d
+
+# multimedia
+mkdir -p staging/usr/share/dm2
+cp data/*.wav staging/usr/share/dm2
+
+# test_scripts
 mkdir -p staging/home/root
-cp data/test_script staging/home/root
+cp data/checkAP.awk data/test_script data/test-dialer staging/home/root
 
+# correct executable
+rm -f staging/home/root/dm2.bin
+cd staging/home/root
+ln -sf ../../usr/bin/dm2.bin dm2.bin
+cd ../../..
 
 # cook tarball
 cd staging
