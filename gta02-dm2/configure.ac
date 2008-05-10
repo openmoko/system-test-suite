@@ -1,5 +1,5 @@
 AC_PREREQ(2.53)
-AC_INIT(dm2, 1.30, anthony_chang@openmoko.com)
+AC_INIT(dm2, REPLACE_DM_VERSION, anthony_chang@openmoko.com)
 AM_INIT_AUTOMAKE()
 AC_CONFIG_SRCDIR([src/dm2.c])
 AC_CONFIG_HEADER([config.h])

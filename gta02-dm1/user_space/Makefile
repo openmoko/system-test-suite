@@ -1,7 +1,7 @@
 #export PATH=/usr/local/openmoko-pbe/usr/bin/:$PATH
 #TOOLCHAIN_PREFIX = /usr/local/openmoko-pbe/usr/bin/arm-linux-uclibc-# pbe compiler is error
 #TOOLCHAIN_PREFIX = arm-linux-uclibc-//for PBE
-TOOLCHAIN_PREFIX = /home/miles/cross/bin/arm-angstrom-linux-gnueabi-
+TOOLCHAIN_PREFIX = arm-angstrom-linux-gnueabi-
 
 CC = $(TOOLCHAIN_PREFIX)gcc
 AR = $(TOOLCHAIN_PREFIX)ar
@@ -40,11 +40,10 @@ LIBS = \
 
 all: $(BINS)
 
-main: $(OBJS) $(LIBS)
+main: $(LIBS) $(OBJS)
 	$(CC) -static $(CFLAGS) -o $@ $(OBJS) $(LIBS) 
 #	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS) 
 	$(STRIP) -x $@
-	cp main /home/miles/Project/rootfs_data/rootfs/
 
 gsmd:
 	cd gsm; ./autogen.sh; ./crossconf; make; cp src/gsmd/gsmd ../; \

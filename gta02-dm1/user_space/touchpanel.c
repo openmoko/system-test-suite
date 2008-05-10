@@ -1,5 +1,5 @@
 #include "dm_init.h"
-#include "tslib.h"
+#include "libts/src/tslib.h"
 
 void touchpanel_test(void)
 {

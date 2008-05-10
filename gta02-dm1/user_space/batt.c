@@ -2,19 +2,12 @@
 
 #define BATTERY_VOLTAGE "/sys/bus/i2c/drivers/pcf50633/0-0073/battvolt"
 
-void battery_test(void)
-{
-        get_voltage(BATTERY_VOLTAGE, 0);
-}
-
 int get_voltage(const char* device ,int type)
 {
 	FILE *fp = NULL;
 	char battery_voltage_value[8];
 	int i, total = 0;
 	int average = 0;
-	char buffer[8];	
-	int fd, rc = 0;;
 
 	/* Confirm device initialized */
 	if (access(device, R_OK) != 0) {
@@ -28,14 +21,14 @@ int get_voltage(const char* device ,int type)
                                 total += atoi(battery_voltage_value);
 			}
 			else {
-				close(fd);
+				fclose(fp);
 				break;
 			}
 		} else
 			goto err;
 	}
 
-	close(fd);
+	fclose(fp);
 
 	if (i == 10) {
 		average = total / 10;
@@ -59,5 +52,10 @@ err:
 	        printf("[BATTERY] Fail ");
 		return 0;
 	}
+}
+
+void battery_test(void)
+{
+        get_voltage(BATTERY_VOLTAGE, 0);
 }
 

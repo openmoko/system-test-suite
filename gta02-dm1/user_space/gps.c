@@ -40,9 +40,9 @@ struct nmea_gsv {
 #define VTG "$GPVTG"
 #define LOR "$PGLOR"
 
-int GPGGA(char* str, struct nmea_gga* gga);
+//int GPGGA(char* str, struct nmea_gga* gga);
 int GPGSV(char* str, struct nmea_gsv* gsv);
-int GPGSA(char* str, struct nmea_gsa* gsa);
+//int GPGSA(char* str, struct nmea_gsa* gsa);
 
 static char delim[] = ",*";
 static char line_buffer[1024] = { 0 };
@@ -143,7 +143,7 @@ static void ttydevice_setting(char on)
 	tcsetattr(fd, TCSANOW, &ti);
 	close(fd);
 }
-
+/*
 static void agps_nmea_read(char* buf)
 {
     char* p;
@@ -192,12 +192,14 @@ static void agps_nmea_read(char* buf)
     	}
 	while (p);
 }
+*/
 static int gps_nmea_verify(int fd,char* buf)
 {
 	char *p,*s;
-	int i,res, j=0, k=0;	
-	char tmp[512];
-	char tmp3[32];
+	//int i,res, j=0, k=0;	
+	int res;	
+	//char tmp[512];
+	//char tmp3[32];
 	memset(line_buffer,0,1024);
 	while(1)
 	{
@@ -237,10 +239,10 @@ static int gps_nmea_check(int fd,char* buf)
 	memset(buf,0,BUFSIZ);		
 	res = read(fd,buf,BUFSIZ);
 
-	if(buf[0] == NULL)
+	if(buf == NULL)
 	{
 		printf("[GPS] NMEA data receive failed\n");
-		return; 
+		return 0; 
 	}
 
 	if (strstr(buf,GSV))
@@ -252,6 +254,7 @@ static int gps_nmea_check(int fd,char* buf)
 			pass = 1;
 		}
 	}
+	return 1;
 }
 
 void gps_test(void)
@@ -273,7 +276,7 @@ void gps_test(void)
 	memset(buf,0,BUFSIZ);
 	fd=open(GPS_DEVICE, O_RDWR);			
 	res = read(fd,buf,BUFSIZ);
-	if(buf[0] == NULL)
+	if(buf == NULL)
 	{
 		printf("[GPS] NMEA data receive failed 00\n");
 		return; 
@@ -288,7 +291,7 @@ void gps_test(void)
 	memset(buf,0,BUFSIZ);
 	res = read(fd,buf,BUFSIZ);
 	//printf("read res =%d",res);
-	if(buf[0] != NULL)
+	if(buf != NULL)
 	{
 		printf("[GPS] Cold start testing failed 00\n");
 		return; 
@@ -358,8 +361,8 @@ int GPGSV(char* str, struct nmea_gsv* gsv)
             if (++k >= 4)
             {
                 int prn = atoi(gsv->sate[j][0]);
-                int el  = atoi(gsv->sate[j][1]);
-                int az  = atoi(gsv->sate[j][2]);
+                //int el  = atoi(gsv->sate[j][1]);
+                //int az  = atoi(gsv->sate[j][2]);
                 int CN0 = atoi(gsv->sate[j][3]);
 
                 printf("PRN= %d, CN: %d\n", prn, CN0);
