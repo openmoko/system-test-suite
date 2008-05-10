@@ -85,7 +85,7 @@ case "$1" in
 
 			setSSID)
 
-                                LOG=/root/wifi_log
+                                LOG=/tmp/wifi_log
 
                                 iwlist scan | awk -f checkAP.awk | sort | head -n1 | cut -c5- > /tmp/apname
 				if test -f /tmp/apname ; then
@@ -117,6 +117,26 @@ case "$1" in
 
 		esac
 		;;
+      hdq)
+
+                case "$2" in
+			detect)
+				echo "voltage : "
+cat  /sys/devices/platform/bq27000-battery.0/power_supply\:bat/voltage_now
+echo "current : "
+cat /sys/devices/platform/bq27000-battery.0/power_supply\:bat/current_now
+echo "temperature : "
+cat /sys/devices/platform/bq27000-battery.0/power_supply\:bat/temp
+echo "capacity : "
+cat /sys/devices/platform/bq27000-battery.0/power_supply\:bat/capacity
+echo "charge : "
+cat /sys/devices/platform/bq27000-battery.0/power_supply\:bat/charge_full
+				;;
+			*)
+				echo "$1 [more option]"
+				;;
+                esac
+                ;;
       off)
 
 	      sync
