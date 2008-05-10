@@ -136,7 +136,7 @@ err:
 
 test_t sn_tests[] = {
 	{
-		"SN",
+		"CN",
 		do_gps_sn_test,
 		FALSE,
 		NULL,

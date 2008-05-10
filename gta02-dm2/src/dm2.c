@@ -51,7 +51,10 @@ test_suite suites[] = {
 	{ "GPS",	"Find out the Fixed time!!\n",	 	 gps_tests },		
 	{ "GSM ",     	"Check the GSM status\n",     	 	 gsm_tests },
 	{ "WiFi",	"Check the Wifi status!!\n",    	 wifi_tests },
-	{ "SN",    	"Check the  GPS SN!!\n", 	 	 sn_tests },
+	/* notice for historical reasons, this is referred to as
+	 * Cignal to Noise ratio for testing purposes
+	 */
+	{ "CN",    	"Check the GPS CN!!\n", 	 	 sn_tests },
 	{ "DM2",     	"Save DM2 log to PC\n",     		 log_tests_2 },
 
 };
