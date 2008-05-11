@@ -1,0 +1,91 @@
+#!/bin/sh
+#
+# author: Andy Green <andy@openmoko.com>
+
+# generate a rootfs appropriate for test sd card
+# run with "skip" as parameter to avoid downloading latest rootfs again
+
+if [ "`whoami`" != "root" ] ; then
+	echo "Sorry, have to run me as root to create the dev nodes"
+	exit 1
+fi
+
+DAILY_BUILD_URL=http://buildhost.openmoko.org/daily/neo1973/deploy/glibc/images/neo1973/
+
+# figure out latest rootfs tarball that can be found above
+
+LATEST_ROOTFS_TARBALL=$DAILY_BUILD_URL`wget -O- $DAILY_BUILD_URL | grep rootfs.tar.gz | tail -n1 | sed "s/.*href=\"//g" | sed "s/\".*//g"`
+
+# grab the latest rootfs tarball
+
+if [ "$1" != "skip" ] ; then
+wget -Olatest-rootfs-tarball.tar.gz "$LATEST_ROOTFS_TARBALL"
+if [ $? -ne 0 ] ; then
+	echo "Failed to get latest tarball from " $LATEST_ROOTFS_TARBALL
+	exit 1
+fi
+fi
+
+mkdir -p test-rootfs
+cd test-rootfs
+rm -rf *
+
+# unpack the normal rootfs
+echo "Unpacking fetched rootfs..."
+tar xf ../latest-rootfs-tarball.tar.gz
+if [ $? -ne 0 ] ; then
+	echo "Unable to unpack latest-rootfs-tarball.tar.gz"
+	exit 1
+fi
+
+# add canned devices
+tar xf ../test-rootfs-canned-dev.tar.gz
+
+# clean out inappropriate stuff in rcS.d
+# we have canned /dev set to save time of udev startup
+#
+rm -rf etc/rcS.d/S03udev
+rm -rf etc/rcS.d/S43portmap
+rm -rf etc/rcS.d/S45mountnfs.sh
+rm -rf etc/rcS.d/S45mountnfs.sh
+rm -rf etc/rcS.d/S97blueprobe
+rm -rf etc/rcS.d/S98configure
+rm -rf etc/rcS.d/S00psplash
+rm -rf etc/rcS.d/S01psplash
+rm -rf etc/rcS.d/S99finish
+
+# clean out inappropriate stuff in rc3.d
+# dm2 will run these kind of things itself
+#
+rm -rf etc/rc3.d/S10alsa-state
+rm -rf etc/rc3.d/S20apmd
+rm -rf etc/rc3.d/S20syslog
+rm -rf etc/rc3.d/S23bluetooth
+rm -rf etc/rc3.d/S35pulseaudio
+rm -rf etc/rc3.d/S99rmnologin
+rm -rf etc/rc3.d/S20dbus-1
+rm -rf etc/rc3.d/S21avahi-daemon
+rm -rf etc/rc3.d/S50usb-gadget
+
+# come up in runlevel 3
+# we don't need no steenking X
+#
+cat etc/inittab | sed s/id:5:initdefault:/id:3:initdefault:/g >/tmp/it
+rm etc/inittab
+cp /tmp/it etc/inittab
+
+# add dm2 stuff
+#
+echo "Adding DM2-specific stuff..."
+tar xf ../dm2.tar.gz
+
+# create test rootfs tarball
+#
+echo "Creating new test rootfs..."
+tar czf ../rootfs-dm2.tar.gz *
+cd ..
+
+echo "Created rootfs-dm2.tar.gz"
+echo
+echo "Don't forget to remount sdcard as just rw without nodev"
+echo " before untarring rootfs-dm2.tar.gz into sdcard / !"

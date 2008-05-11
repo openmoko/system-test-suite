@@ -64,8 +64,8 @@ cp om-dm2-ts.conf staging/etc/ts.conf
 cp data/*.state data/pointercal staging/etc
 
 # initscript
-mkdir -p staging/etc/rcS.d
-cp data/S99dm2 staging/etc/rcS.d
+mkdir -p staging/etc/rc3.d
+cp data/S99dm2 staging/etc/rc3.d
 
 # multimedia
 mkdir -p staging/usr/share/dm2
