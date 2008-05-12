@@ -1,0 +1,15 @@
+bootargs_base= rootfstype=jffs2 root=/dev/mtdblock6 console=ttySAC2,115200 console=tty0 loglevel=8 regular_boot
+bootcmd= setenv bootargs ${bootargs_base} ${mtdparts}; nand read.e 0x32000000 kernel 0x200000; bootm 0x32000000
+stdout=usbtty
+stderr=usbtty
+stdin=usbtty
+usbtty=cdc_acm
+sd_image_name=uImage.bin
+bootdelay=1
+quiet=1
+splashimage= nand read.e 0x32000000 splash 0x5000; unzip 0x32000000 0x8800000 0x96000
+menu_1= Boot from microSD (FAT+ext2): setenv bootargs ${bootargs_base} rootfstype=ext2 root=/dev/mmcblk0p2 rootdelay=5 ${mtdparts} ro; mmcinit; fatload mmc 1 0x32000000 ${sd_image_name}; bootm 0x32000000
+menu_4= Set console to USB: setenv stdin usbtty; setenv stdout usbtty; setenv stderr usbtty
+menu_5= Set console to serial: setenv stdin serial; setenv stdout serial; setenv stderr serial
+menu_6= Reboot: reset
+menu_8= Power off: neo1973 power-off
