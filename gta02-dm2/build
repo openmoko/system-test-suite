@@ -57,6 +57,12 @@ make -s install DESTDIR=`pwd`/staging
 
 mkdir -p staging/etc
 
+# /etc/startup compatability
+
+echo "!#/bin/sh" >staging/etc/startup
+echo "/sbin/init" >>staging/etc/startup
+chmod +x staging/etc/startup
+
 # override ts.conf
 cp om-dm2-ts.conf staging/etc/ts.conf
 
@@ -73,7 +79,16 @@ cp data/*.wav staging/usr/share/dm2
 
 # test_scripts
 mkdir -p staging/home/root
-cp data/checkAP.awk data/test_script data/test-dialer staging/home/root
+cp	data/splash.gz \
+	data/dialout \
+	data/checkAP.awk \
+	data/test_script \
+	data/test-dialer \
+	staging/home/root
+
+# flashnor
+mkdir -p staging/sbin
+cp data/flashnor staging/sbin
 
 # correct executable
 rm -f staging/home/root/dm2.bin

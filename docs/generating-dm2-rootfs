@@ -4,8 +4,22 @@ Flow for creating a test rootfs for SD card
 1) Currently, go into gta02-dm2 subdir and do ./build
    which generates DM2-specific files in dm2.tar.gz
 
+2) Make sure you have the final images you want to
+   flash on the produced devices in ./final-images.
+   These look like this for example:
+
+     nor.bin-gta02v5-20080305
+     rootfs.jffs2
+     u-boot.bin
+     uImage.bin
+
 2) Still in gta02-dm2, as root, run
-    ./generate-test-rootfs
+
+     ./generate-test-rootfs
+
+   (You can use "skip" argument to stop it
+   downloading latest normal rootfs from buildhost)
+
    This will fetch the latest normal rootfs tarball,
    modify it, unpack the dm2.tar.gz DM2 files into
    it, unpack a canned set of devices into it so
@@ -14,16 +28,17 @@ Flow for creating a test rootfs for SD card
 
 3) Insert your SD card into your card reader on PC
    Mount the second partition ext2 somewhere
+
    *** IMPORTANT *** confirm it did not mount nodev!
    If it did (some udev is set up for this) then as
    root remount without nodev something like this
 
-    mount /dev/sdf2 /media/disk-1 -oremount,rw
+     mount /dev/sdf2 /media/disk-1 -oremount,rw
 
 4) cd into the SD card mountpoint, eg
 
-    cd /media/disk-1
-    tar xf /path/to/rootfs-dm2.tar.gz
+     cd /media/disk-1
+     tar xf /path/to/rootfs-dm2.tar.gz
 
 5) umount the SD card (both partitions if automounted)
 

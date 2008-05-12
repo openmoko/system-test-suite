@@ -2,6 +2,9 @@
 #
 # author: Andy Green <andy@openmoko.com>
 
+echo "DM2 SD Card Image-o-matic   Andy Green <andy@openmoko.com>"
+echo
+
 # generate a rootfs appropriate for test sd card
 # run with "skip" as parameter to avoid downloading latest rootfs again
 
@@ -10,16 +13,43 @@ if [ "`whoami`" != "root" ] ; then
 	exit 1
 fi
 
+
+FINAL_IMAGE_FILES="nor.bin-gta02v5-* rootfs.* u-boot.bin uImage.bin"
+
+#
+# confirm full set of final image files
+#
+
+OK=1
+for i in $FINAL_IMAGE_FILES ; do
+ if [ ! -e ./final-images/$i ] ; then
+  echo "Missing ./final-images/$i"
+  OK=
+ fi
+done
+
+if [ -z $OK ] ; then
+  exit 1
+fi
+
+echo "Final images are present in ./final-images"
+
+#
+# get the base rootfs
+#
+
+if [ "$1" != "skip" ] ; then
 DAILY_BUILD_URL=http://buildhost.openmoko.org/daily/neo1973/deploy/glibc/images/neo1973/
 
 # figure out latest rootfs tarball that can be found above
 
-LATEST_ROOTFS_TARBALL=$DAILY_BUILD_URL`wget -O- $DAILY_BUILD_URL | grep rootfs.tar.gz | tail -n1 | sed "s/.*href=\"//g" | sed "s/\".*//g"`
+LATEST_ROOTFS_TARBALL=$DAILY_BUILD_URL`wget -nv -O- $DAILY_BUILD_URL | grep rootfs.tar.gz | tail -n1 | sed "s/.*href=\"//g" | sed "s/\".*//g"`
 
 # grab the latest rootfs tarball
 
-if [ "$1" != "skip" ] ; then
-wget -Olatest-rootfs-tarball.tar.gz "$LATEST_ROOTFS_TARBALL"
+echo "Fetching new rootfs to base on"
+
+wget -Olatest-rootfs-tarball.tar.gz -nv "$LATEST_ROOTFS_TARBALL"
 if [ $? -ne 0 ] ; then
 	echo "Failed to get latest tarball from " $LATEST_ROOTFS_TARBALL
 	exit 1
@@ -79,6 +109,16 @@ cp /tmp/it etc/inittab
 echo "Adding DM2-specific stuff..."
 tar xf ../dm2.tar.gz
 
+# add final images
+#
+echo "Adding in final images..."
+for i in $FINAL_IMAGE_FILES ; do
+ rm -f home/root/$i
+ IMG=`ls -1rSt ../final-images/$i | tail -n1`
+ echo "  $IMG"
+ cp $IMG home/root
+done
+
 # create test rootfs tarball
 #
 echo "Creating new test rootfs..."
@@ -89,3 +129,4 @@ echo "Created rootfs-dm2.tar.gz"
 echo
 echo "Don't forget to remount sdcard as just rw without nodev"
 echo " before untarring rootfs-dm2.tar.gz into sdcard / !"
+
