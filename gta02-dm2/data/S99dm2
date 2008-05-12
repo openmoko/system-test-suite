@@ -38,7 +38,7 @@ case "$1" in
 		
 	echo "Starting DM2" > /dev/tty0
 
-        dm2&
+        /home/root/dm2&
   ;;
 
   stop)

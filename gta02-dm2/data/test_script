@@ -1,4 +1,5 @@
-#! /bin/sh -e
+#! /bin/sh
+# was -e , exit on signals
 
 export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
 
@@ -87,25 +88,59 @@ case "$1" in
 
                                 LOG=/tmp/wifi_log
 
-                                iwlist scan | awk -f checkAP.awk | sort | head -n1 | cut -c5- > /tmp/apname
+				killall -q udhcpc
+
+				echo "Scanning..."
+				echo "Scanning..." >/tmp/wlan-progress
+                                iwlist eth0 scan | awk -f /home/root/checkAP.awk | sort -n | head -n1 > /tmp/apname
+				apname=
 				if test -f /tmp/apname ; then
 					apname=`cat /tmp/apname`
 				fi
 
-				DO_TRY=0
-				if test x"$apname" = x56 ; then
-					DO_TRY=1
-				fi
-				if test x"$apname" = x78 ; then
-					DO_TRY=1
-				fi
-				echo setSSID: $apname
-				if test ! -z $DO_TRY  ; then
-                                	iwconfig eth0 essid 56
+				APMAC=`echo $apname | cut -d' ' -f3`
+				APNAME=`echo $apname | cut -d' ' -f2`
+
+				echo setSSID: $APNAME $APMAC
+				if test ! -z $APMAC  ; then
+					echo "Associating to \"$APNAME\" / $APMAC" >>/tmp/wlan-progress
+                                	iwconfig eth0 essid "$APNAME"
+#                                	iwconfig eth0 ap $APMAC
+					if [ $? -ne 0 ] ; then
+						echo "FAIL assoc \"$APNAME\"" >>/tmp/wlan-progress
+						ifconfig eth0 down
+						iwconfig eth0 essid off
+						exit 1
+					fi
+					echo "Associated, trying DHCP" >>/tmp/wlan-progress
                                 	udhcpc --interface=eth0
-					iperf -c 192.168.1.22 -i 2 -b 11M -u -n 6M -t 4| grep 2.0 | grep 4.0 > $LOG 
+					if [ -z "`ifconfig eth0 | grep inet`" ] ; then
+						echo "FAIL DHCP" >>/tmp/wlan-progress
+						killall -q udhcpc
+						ifconfig eth0 down
+						iwconfig eth0 essid off
+						exit 1
+					fi
+					echo "Trying iperf" >>/tmp/wlan-progress
+					iperf -c 192.168.1.22 -i 2 -b 11M -u -n 6M -t 4| \
+						grep 2.0 | grep 4.0 | sed "s/^.*\ sec//g" > $LOG
+					if [ -z "`cat $LOG`" ] ; then
+						echo "FAIL iperf" >>/tmp/wlan-progress
+						killall -q udhcpc
+						ifconfig eth0 down
+						iwconfig eth0 essid off
+						rm -f /etc/resolv.conf
+						exit 1
+					fi
+					echo "SUCCESS iperf" >>/tmp/wlan-progress
+					cat $LOG >>/tmp/wlan-progress
+                                        killall -q udhcpc
+                                        ifconfig eth0 down
+					iwconfig eth0 essid off
+					rm -f /etc/resolv.conf
 				else
 					echo "[WiFi setSSID FAIL]"
+					echo "FAILED to find AP" >>/tmp/wlan-progress
 				fi
 				;;
 			off)

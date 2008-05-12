@@ -227,7 +227,7 @@ static void on_pass(struct oltk_button *b, void *data)
 
 	if (active_test>-1 && tests)
 		tests[active_test].result = PASS;
-
+ 
 	//printf("test (%d, %d) passed\n", active_suite, active_test);
 	next_test(data);
 }
@@ -258,6 +258,33 @@ int countdown(int sec, int avaiable)
 		oltk_msleep(oltk, 1000);			   
 	}
 	return TRUE;	
+}
+
+int countdown_statusfile(int sec, int avaiable, const char *statusfile)
+{
+	while (sec--) {
+
+		if (avaiable) {
+			char buf[400];
+			FILE * fp = fopen(statusfile, "r");
+			char status[400];
+			int len;
+
+			status[0] = '\0';
+			if (fp) {
+				len = fread(status, 1, sizeof(status) - 1, fp);
+				fclose(fp);
+				if (len >= 0)
+					status[len] = '\0';
+			}
+			snprintf(buf, sizeof(buf) -1,
+				 "%5d sec\n%s\n", sec, status);
+			oltk_view_set_text(view, buf);
+			oltk_redraw(oltk);
+		}
+		oltk_msleep(oltk, 1000);
+	}
+	return TRUE;
 }
 
 int set_data(const char* device ,const char* data)

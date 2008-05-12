@@ -189,4 +189,5 @@ int do_fork(void  *func);
 int countdown(int sec, int avaiable);
 int read_log(char *path, char *buf, int size);
 int set_data(const char* device ,const char* data);
+int countdown_statusfile(int sec, int avaiable, const char *statusfile);
 

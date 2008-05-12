@@ -107,7 +107,9 @@ chmod +x staging/usr/sbin/iperf
 
 # correct executable
 rm -f staging/home/root/dm2.bin
+rm -f staging/usr/bin/dm2
 cd staging/home/root
+ln -sf dm2.bin dm2
 ln -sf ../../usr/bin/dm2.bin dm2.bin
 cd ../../..
 
