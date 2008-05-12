@@ -7,7 +7,7 @@
 if [ -e RELEASE_STRING -a -e ./configure.ac ]; then
 	(sed s/REPLACE_DM_VERSION/`cat RELEASE_STRING`/g \
 		configure.ac > configure.ac.sed_modifyed && \
-		mv configure.ac.sed_modifyed configure.ac )
+		mv -f configure.ac.sed_modifyed configure.ac )
 	echo "#define DM_SW_VERSION \"`cat RELEASE_STRING`\"" > \
 		src/gta02_dm2_version.h
 fi

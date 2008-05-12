@@ -7,19 +7,13 @@ extern int brightness_test(int level);
 
 static void do_suspend_test(void)
 {
-	oltk_view_set_text(view, "Please Wait 10 seconds to wake up");
+	oltk_view_set_text(view, "Suspending");
 	oltk_redraw(oltk);
-	brightness_test(1);
 
-	// system("apm -s");
-	// system("echo mem > /sys/power/state");
-	system("cp /home/root/suspend-workaround.sh /tmp/");
-	system("./suspend-workaround.sh");
+	system("echo mem > /sys/power/state");
 
-	// oltk_view_set_text(view, "Wake Up Success");
-	oltk_view_set_text(view, "Not yet");
+	oltk_view_set_text(view, "Wake Up Success");
 	oltk_redraw(oltk);
-	brightness_test(MAX);
 }
 
 
