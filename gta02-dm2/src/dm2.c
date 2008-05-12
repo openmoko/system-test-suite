@@ -137,11 +137,8 @@ void do_gsm_log_on_test(void)
 	char tmp[BUFSIZ];
 	char buf[BUFSIZ];
 
-	memset(buf, 0, sizeof(buf));
-
-	//system("cp log tmp/");//"cp tmp/log ../");
-	system("mkdir tmp");
-	system("cp log tmp/");
+	system("mkdir -p tmp");
+	system("cp /tmp/log tmp/");
 
 	snprintf(buf, BUFSIZ, "SW Version : %s \n", DM_SW_VERSION);
 
