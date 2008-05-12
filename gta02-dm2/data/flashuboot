@@ -1,0 +1,29 @@
+#!/bin/sh -e
+
+#
+#  mtd0  NOR-flash
+#  mtd1  u-boot
+#  mtd2  u-boot_env
+#  mtd3  kernel
+#  mtd4  splash
+#  mtd5  factory
+#  mtd6  rootfs
+
+#[ -z "$1" -o ! -z "$2" ] && usage
+
+erase()
+{
+	flash_eraseall -q /dev/mtd1
+	nandwrite -p -q /dev/mtd1 $image
+	dynenv /dev/mtd1 0x`awk '/mtd1/{print $2}' </proc/mtd`
+}
+
+usage()
+{
+	echo "usage: $0 ~/xxxx.bin" 1>&2
+	exit 1
+}
+
+[ -z "$1" -o ! -z "$2" ] && usage
+image=$1
+erase

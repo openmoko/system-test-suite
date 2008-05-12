@@ -1,0 +1,19 @@
+#! /bin/sh -e
+
+#flashimage /dev/mtd1 /home/root/u-boot.bin && touch /tmp/uboot-done;
+
+flashuboot /home/root/u-boot.bin && touch /tmp/uboot-done;
+sleep 3;
+####### modify #####
+# flashimage /dev/mtd2 /home/root/env-5secs.env && touch /tmp/env-done;
+# follow Mon Apr 28 11:26:38 CEST 2008: 
+# http://lists.openmoko.org/pipermail/openmoko-kernel/2008-April/002601.html
+nanddump -b -o -f env.old /dev/mtd2 && \
+envedit -s 0x40000 -i env.old -o env.new -n -f /usr/sbin/environment.prep && \
+flash_eraseall /dev/mtd2 && nandwrite -p /dev/mtd2 env.new && \
+touch /tmp/env-done;
+####### done #####
+flashimage /dev/mtd4 /home/root/splash.gz && touch /tmp/splash-done;
+flashimage /dev/mtd3 /home/root/uImage.bin && touch /tmp/kernel-done;
+flashimage /dev/mtd6 /home/root/rootfs.jffs2 && touch /tmp/rootfs-done;
+

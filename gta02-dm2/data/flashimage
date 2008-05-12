@@ -1,0 +1,31 @@
+#!/bin/sh -e
+
+#
+#  mtd0  NOR-flash
+#  mtd1  u-boot
+#  mtd2  u-boot_env
+#  mtd3  kernel
+#  mtd4  splash
+#  mtd5  factory
+#  mtd6  rootfs
+
+#[ -z "$1" -o ! -z "$3" ] && usage
+
+erase()
+{
+	flash_eraseall -q $dev
+	nandwrite -p -q $dev $image
+}
+
+usage()
+{
+	echo "usage: $0 /dev/mtdx ~/xxxx.bin" 1>&2
+	exit 1
+}
+
+[ -z "$1" -o -z "$2" -o ! -z "$3" ] && usage
+dev=$1
+image=$2
+erase
+#flash_eraseall -q $1
+#nandwrite -p -q $1 $2

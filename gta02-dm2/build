@@ -86,9 +86,23 @@ cp	data/splash.gz \
 	data/test-dialer \
 	staging/home/root
 
-# flashnor
+# flashnor + dl_finalimg
 mkdir -p staging/sbin
+mkdir -p staging/usr/sbin
 cp data/flashnor staging/sbin
+chmod +x staging/sbin/flashnor
+cp data/dl_finalimg staging/usr/sbin
+chmod +x staging/usr/sbin/dl_finalimg
+cp data/envedit staging/usr/sbin
+chmod +x staging/usr/sbin/envedit
+cp data/flashuboot staging/usr/sbin
+chmod +x staging/usr/sbin/flashuboot
+cp data/flashimage staging/usr/sbin
+chmod +x staging/usr/sbin/flashimage
+cp data/dynenv staging/usr/sbin
+chmod +x staging/usr/sbin/dynenv
+cp data/environment.prep staging/usr/sbin
+chmod +x staging/usr/sbin/environment.prep
 
 # correct executable
 rm -f staging/home/root/dm2.bin
