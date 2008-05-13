@@ -1,5 +1,6 @@
 #include "dm2.h"
 
+static int did_bt_power = 0;
 
 static void bt_mac_address(vodi)
 {
@@ -51,6 +52,8 @@ static void do_bt_on_test(void)
 		return;
 	}
 
+	did_bt_power = 1;
+
 	sleep(2);
 
 	system("hciconfig hci0 up");
@@ -61,7 +64,10 @@ static void do_bt_on_test(void)
 
 static void bt_scan_test(void)
 {
-	system("hcitool scan > /tmp/bt_log");
+	if (!did_bt_power)
+		do_bt_on_test();
+
+	system("hcitool scan | tr '\\t' ' ' > /tmp/bt_log");
 }
 
 static void bt_scan_log(void)
@@ -75,42 +81,31 @@ static void bt_scan_log(void)
 		return;
 	}
 
-	memset(buffer,0,sizeof(buffer));
+	read_log(BT_LOG_PATH, buffer, BUFSIZ);
 
-	read_log(BT_LOG_PATH,buffer,BUFSIZ);
-	printf("Bt_log:\n%s\n",buffer);
-/*
-	for(i=0;buffer[i]=0;i++) {
-		if ((buffer[i] >= 0x61 && buffer[i] <= 0x7A) ||
-				(buffer[i] >= 0x41 && buffer[i]>= 0x5A) ||
-				(buffer[i] >= 0x30 && buffer[i]<= 0x3A) ||
-				(buffer[i] == "00")) {
-			;
-		}
-		else
-			buffer[i] = '?';
-	}
-	printf("Bt_log:\n%s\n",buffer);
-*/
-	if ((tests[active_test].log = strstr(buffer, "00"))==NULL){
-		oltk_view_set_text(view,"Fail");
-		//strcpy(tests[active_test].log , "No Device");
-	}
+	printf("Bt_log:\n%s\n", buffer);
+
+	tests[active_test].log = buffer;
+
+	if (strstr(buffer, "00:") == NULL)
+		strcat(buffer, "\nFAIL");
 	else
-		oltk_view_set_text(view, tests[active_test].log);
+		strcat(buffer, "\nPass");
+
+	oltk_view_set_text(view, tests[active_test].log);
 
 	oltk_redraw(oltk);
 }
 
 static void do_bt_scan_test(void)
 {
+	unlink("/tmp/bt_log");
 
 	do_fork(bt_scan_test);
 
-	countdown(BT_TEST_TIME,TRUE);
+	countdown_statusfile(BT_TEST_TIME, TRUE, "/tmp/bt_log");
 
 	bt_scan_log();
-
 }
 
 
