@@ -5,20 +5,17 @@ extern void audio_path(int path);
 
 static void gsm_dial_test(void)
 {
-	system("libgsmd-tool -m shell < /home/root/dialout");
+	system("libgsmd-tool -m shell < /home/root/dialout |"
+		" grep -v ^# | grep -v ^libg | grep -v ^This\\  |"
+		" sed \"s/)/)\\\\n/g\" >/tmp/gsm-progress");
 }
 
 static void do_gsm_dial_test(void)
 {
-	//if (!set_data(GSM_POWER,"1")){
-	//	oltk_view_set_text(view,"Fail");
-	//	oltk_redraw(oltk);
-	//	return;
-	//}
+	char buf[800];
 
-	//sleep(2);
+	unlink("/tmp/gsm-progress");
 
-	//system("gsmd -p /dev/ttySAC0 -s 115200 -F &");
 	oltk_view_set_text(view, "Modem On");
 	oltk_redraw(oltk);
 	sleep(1);
@@ -26,12 +23,25 @@ static void do_gsm_dial_test(void)
 	audio_path(GSM_RECEIVER);
 
 	do_fork(gsm_dial_test);
-	countdown(GSM_DIAL_TIME,TRUE);
+
+	countdown_statusfile(GSM_DIAL_TIME, TRUE, "/tmp/gsm-progress");
+
+	system("killall libgsmd-tool");
+
+	read_log("/tmp/gsm-progress", buf, sizeof(buf));
+
+	if (!strlen(buf))
+		strcpy(buf, "No data");
+
+	if (!strstr(buf, "ALERT"))
+		strncat(buf, "\nFAIL", sizeof(buf) - 1);
+	else
+		strncat(buf, "\nPASS", sizeof(buf) - 1);
+
+	oltk_view_set_text(view, buf);
+	oltk_redraw(oltk);
 
 	sleep(1);
-
-	//system("kill -9 `ps | grep gsmd | awk '{print $1}'`");
-
 	audio_path(SPEAKER);
 }
 
