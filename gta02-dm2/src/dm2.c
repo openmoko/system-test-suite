@@ -332,7 +332,7 @@ int brightness_test(int level)
 {
 	switch(level) {
 	case 1:
-		return set_data(BRIGHTNESS_DEVICE,"0");
+		return set_data(BRIGHTNESS_DEVICE,"1");
 
 	case 2:
 		return set_data(BRIGHTNESS_DEVICE,"15");
