@@ -122,6 +122,9 @@ done
 # create test rootfs tarball
 #
 echo "Creating new test rootfs..."
+chown -R root:root *
+mkdir home/root/.ssh
+cp ../data/final_check_public_key ./home/root/.ssh/authorized_keys
 tar czf ../rootfs-dm2.tar.gz *
 cd ..
 
