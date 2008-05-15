@@ -156,16 +156,16 @@ case "$1" in
 
                 case "$2" in
 			detect)
-				echo "voltage : "
-cat  /sys/devices/platform/bq27000-battery.0/power_supply\:bat/voltage_now
-echo "current : "
-cat /sys/devices/platform/bq27000-battery.0/power_supply\:bat/current_now
-echo "temperature : "
-cat /sys/devices/platform/bq27000-battery.0/power_supply\:bat/temp
-echo "capacity : "
-cat /sys/devices/platform/bq27000-battery.0/power_supply\:bat/capacity
-echo "charge : "
-cat /sys/devices/platform/bq27000-battery.0/power_supply\:bat/charge_full
+				echo -n "voltage : "
+cat /sys/devices/platform/bq27000-battery.0/power_supply/bat/voltage_now
+echo -n "current : "
+cat /sys/devices/platform/bq27000-battery.0/power_supply/bat/current_now
+echo -n "temperature : "
+cat /sys/devices/platform/bq27000-battery.0/power_supply/bat/temp
+echo -n "capacity : "
+cat /sys/devices/platform/bq27000-battery.0/power_supply/bat/capacity
+echo -n "charge : "
+cat /sys/devices/platform/bq27000-battery.0/power_supply/bat/charge_full
 				;;
 			*)
 				echo "$1 [more option]"
