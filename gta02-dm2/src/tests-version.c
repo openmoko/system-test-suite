@@ -11,7 +11,7 @@ static void do_view_version(void)
 
 static void norflash_test(void)
 {
-	system("flashnor /home/root/nor.bin-gta02v5-20080305 && "
+	system("flashnor /home/root/nor.bin-gta02v5-* && "
 	       "touch /tmp/nor-done;");
 
 	sleep(1);
