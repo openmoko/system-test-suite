@@ -960,6 +960,11 @@ static void fill_rectangle(struct gr *gr, int x, int y, unsigned int width, unsi
 		hline(gr, x, y + i, width, color);
 }
 
+void oltk_fill_rect(struct oltk *oltk, int x, int y, unsigned int width, unsigned int height, int color)
+{
+	fill_rectangle(oltk->gr, x, y, width, height, color);
+}
+
 static void oltk_draw_point(struct oltk *oltk, int x, int y, int color)
 {
 	hline(oltk->gr, x, y, 1, color);
