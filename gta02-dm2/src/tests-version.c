@@ -5,16 +5,29 @@ static void do_view_version(void)
 	char buf[BUFSIZ];
 
 	memset(buf, 0, sizeof(buf));
-	snprintf(buf, BUFSIZ, "SW Version : %s \n", DM_SW_VERSION);
+	snprintf(buf, BUFSIZ, "SW Version : %s \n\n"
+			"Built: %s, %s\n", DM_SW_VERSION, __DATE__, __TIME__);
 	oltk_view_set_text(view, buf);
 }
 
 static void norflash_test(void)
 {
+	
+	system("flashnor_check /home/root/nor.bin-gta02v5-* &&"
+		"touch /tmp/flashnor_check_done");
+
+        countdown(1, FALSE);
+        if (!access("/tmp/flashnor_check_done",R_OK)) {
+		printf("nor_check: Pass\n");
+                oltk_view_set_text(view, "Pass");
+                oltk_redraw(oltk);
+		return;
+	}
+	/* check fail, burning... */
 	system("flashnor /home/root/nor.bin-gta02v5-* && "
 	       "touch /tmp/nor-done;");
 
-	sleep(1);
+        countdown(15, TRUE);
 
         if (access("/tmp/nor-done",R_OK)) {
 		printf("nor:Fail\n");

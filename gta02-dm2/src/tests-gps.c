@@ -122,14 +122,14 @@ bail:
 
 test_t gps_tests[] = {
 	{
-		"Internal",
+		"External",
 		do_gps_test,
 		FALSE,
 		NULL,
 		NULL
 	},
 	{
-		"External",
+		"Internal",
 		do_gps_test,
 		FALSE,
 		NULL,

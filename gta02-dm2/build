@@ -90,6 +90,8 @@ mkdir -p staging/sbin
 mkdir -p staging/usr/sbin
 cp data/flashnor staging/sbin
 chmod +x staging/sbin/flashnor
+cp data/flashnor_check staging/sbin
+chmod +x staging/sbin/flashnor_check
 cp data/dl_finalimg staging/usr/sbin
 chmod +x staging/usr/sbin/dl_finalimg
 cp data/envedit staging/usr/sbin

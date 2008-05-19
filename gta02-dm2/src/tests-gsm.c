@@ -33,10 +33,10 @@ static void do_gsm_dial_test(void)
 	if (!strlen(buf))
 		strcpy(buf, "No data");
 
-	if (!strstr(buf, "ALERT"))
-		strncat(buf, "\nFAIL", sizeof(buf) - 1);
-	else
+	if (strstr(buf, "ALERT") || strstr(buf, "PROCEED"))
 		strncat(buf, "\nPASS", sizeof(buf) - 1);
+	else
+		strncat(buf, "\nFAIL", sizeof(buf) - 1);
 
 	oltk_view_set_text(view, buf);
 	oltk_redraw(oltk);
