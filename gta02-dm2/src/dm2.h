@@ -47,8 +47,8 @@
 #define WIFI_ON_TEST_TIME (BT_ON_TEST_TIME)
 #define WIFI_TEST_TIME 20
 
-#define GSM_TEST_TIME 2
-#define GSM_DIAL_TIME 45
+#define GSM_TEST_TIME 4 
+#define GSM_DIAL_TIME 36
 
 #define AUDIO_PLAY_TIME  3
 #define AUDIO_TEST_TIME  6

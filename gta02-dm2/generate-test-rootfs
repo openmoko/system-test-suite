@@ -119,12 +119,16 @@ for i in $FINAL_IMAGE_FILES ; do
  cp $IMG home/root
 done
 
+# build gsm for DM2
+cp -frp ../gsm-utility/gsm/build/usr ./
+
 # create test rootfs tarball
 #
 echo "Creating new test rootfs..."
-chown -R root:root *
 mkdir home/root/.ssh
 cp ../data/final_check_public_key ./home/root/.ssh/authorized_keys
+cp ../data/gsmd ./etc/init.d/gsmd
+chown -R root:root *
 tar czf ../rootfs-dm2.tar.gz *
 cd ..
 

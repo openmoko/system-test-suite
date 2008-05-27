@@ -12,7 +12,7 @@ static void gsm_dial_test(void)
 
 static void do_gsm_dial_test(void)
 {
-	char buf[800];
+	char buf[1024];
 
 	unlink("/tmp/gsm-progress");
 
@@ -33,7 +33,8 @@ static void do_gsm_dial_test(void)
 	if (!strlen(buf))
 		strcpy(buf, "No data");
 
-	if (strstr(buf, "ALERT") || strstr(buf, "PROCEED"))
+	if (strstr(buf, "CONNECTED") || strstr(buf, "SYNC") ||
+		strstr(buf, "PROGRESS") || strstr(buf, "ALERT"))
 		strncat(buf, "\nPASS", sizeof(buf) - 1);
 	else
 		strncat(buf, "\nFAIL", sizeof(buf) - 1);

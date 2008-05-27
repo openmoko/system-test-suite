@@ -21,6 +21,8 @@ if [ "$1" = "clean" -o "$1" = "distclean" ] ; then
 	make $1
 	rm -rf staging/*
 	rm -f $TARBALL
+	cd gsm-utility/gsm
+	make $1
 	exit 0
 fi
 
@@ -51,6 +53,12 @@ ls $PKG_CONFIG_PATH
 	CFLAGS="-Wall -Werror -I$STAGING_DIR/usr/include -L$STAGING_DIR/usr/lib"
 make -s clean 
 #fi
+
+cd gsm-utility && ./build-gsm.sh
+if [ $? -ne 0 ] ; then
+ exit $?
+fi
+cd -
 
 make &&\
 make -s install DESTDIR=`pwd`/staging
