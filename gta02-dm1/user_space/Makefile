@@ -12,7 +12,7 @@ CFLAGS = -Wall -Os
 
 export CC AR RANLIB STRIP CFLAGS
 
-BINS = main gsmd
+BINS = main gsmd libgsmd-tool
 OBJS = \
        main.o \
        audio.o \

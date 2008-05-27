@@ -1,0 +1,31 @@
+#!/bin/sh
+export HOME=/root
+export PATH=/bin:/usr/bin:/sbin:/usr/sbin
+export LD_LIBRARY_PATH=/lib:/usr/lib
+mount -t proc none /proc
+mount -t sysfs sysfs /sys
+echo "+=====================================================+"
+echo "| Welcome to the GTA02 Platform                       |"
+echo "+=====================================================+"
+
+
+#mv main /sbin/
+
+ifconfig usb0 192.168.0.1
+echo "set usb success"
+ifconfig lo up
+
+mount -t devpts devpts /dev/pts
+nohup telnetd &
+
+echo ""
+echo "Boot time:"
+uptime
+
+mount -t usbfs none /proc/bus/usb
+/etc/init.d/gsmd start
+echo ""
+echo "+=====================================================+"
+echo "====== Starting test DM1 : ============================"
+
+/bin/sh

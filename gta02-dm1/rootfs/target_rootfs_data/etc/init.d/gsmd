@@ -1,0 +1,50 @@
+#! /bin/sh
+#
+# gsmd  This shell script starts and stops gsmd.
+#
+# chkconfig: 345 90 40
+# description: Gsmd manages access to a serial- or USB-connected GSM
+# processname: gsmd
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+
+GSMD_OPTS="-s 115200 -F"
+GSM_POW="/sys/bus/platform/devices/gta01-pm-gsm.0/power_on"
+GSM_RES="/sys/bus/platform/devices/gta01-pm-gsm.0/reset"
+GSM_DEV="/dev/ttySAC0"
+GSM_DL="/sys/devices/platform/neo1973-pm-gsm.0/download"
+
+case "$1" in
+    start)
+        echo "0" >$GSM_POW; sleep 1 
+        echo "1" >$GSM_POW; sleep 1 
+        echo "1" >$GSM_RES; sleep 1 
+        echo "0" >$GSM_RES; sleep 2 
+
+        echo -n "Starting GSM daemon: "
+       /bin/gsmd -p $GSM_DEV $GSMD_OPTS -d -l syslog & 
+
+        if [ $? = 0 ]; then
+            echo "gsmd."
+        else
+            echo "(failed.)"
+        fi
+        ;;
+    stop)
+        echo "0" >$GSM_POW
+
+        echo -n "Stopping GSM daemon: "
+        start-stop-daemon -K -x /bin/gsmd
+        echo "gsmd."
+        ;;
+    restart|force-reload)
+        $0 stop
+        $0 start
+        ;;
+    *)
+        echo "Usage: /etc/init.d/gsmd {start|stop|restart|force-reload}"
+        exit 1
+        ;;
+esac
+
+exit 0
