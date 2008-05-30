@@ -67,7 +67,8 @@ static void bt_scan_test(void)
 	if (!did_bt_power)
 		do_bt_on_test();
 
-	system("hcitool scan | tr '\\t' ' ' > /tmp/bt_log");
+	system("hcitool scan  --flush --refresh --length=30 --numrsp=1 | "
+	       "tr '\\t' ' ' > /tmp/bt_log");
 }
 
 static void bt_scan_log(void)
