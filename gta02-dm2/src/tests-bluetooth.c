@@ -104,7 +104,8 @@ static void do_bt_scan_test(void)
 
 	do_fork(bt_scan_test);
 
-	countdown_statusfile(BT_TEST_TIME, TRUE, "/tmp/bt_log");
+	/* negative time means end when child process ends */
+	countdown_statusfile(-BT_TEST_TIME, TRUE, "/tmp/bt_log");
 
 	bt_scan_log();
 }

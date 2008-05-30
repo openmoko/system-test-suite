@@ -21,6 +21,9 @@
  */
 
 #include "dm2.h"
+#include <sys/types.h>
+#include <sys/wait.h>
+
 
 
 struct oltk *oltk;
@@ -63,6 +66,8 @@ int active_suite = -1;
 int active_test = -1;
 int n_suites = sizeof(suites) / sizeof(test_suite);
 
+pid_t pid_last_child;
+
 static void sig(int sig)
 {
 	fflush(stderr);
@@ -81,14 +86,16 @@ int do_fork(void  *func)
 	/* Def some vars to hold your results */
 	int fork_result = fork();
 
-	if (fork_result)
-		return TRUE;
-
 	/* fork attempt was not successful */
 	if (fork_result == -1) {
 		fprintf(stderr, "do_fork Failure\n");
 		exit(EXIT_FAILURE);
 		return FALSE;
+	}
+
+	if (fork_result) { /* we are the parent */
+		pid_last_child = fork_result;
+		return TRUE;
 	}
 
 	/*  We're in the child process! */
@@ -262,7 +269,20 @@ int countdown(int sec, int avaiable)
 
 int countdown_statusfile(int sec, int avaiable, const char *statusfile)
 {
+	int flag_end_on_child_term = 0;
+	int status;
+
+	if (sec < 0) {
+		sec = -sec;
+		flag_end_on_child_term++;
+		printf("countdown_statusfile ending on child process term\n");
+	}
+
 	while (sec--) {
+
+		if (flag_end_on_child_term)
+			if (waitpid(pid_last_child, &status, WNOHANG))
+				return TRUE;
 
 		if (avaiable) {
 			char buf[400];
