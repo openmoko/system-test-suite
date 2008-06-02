@@ -7,7 +7,8 @@
 #define BAD_SAMPLES_ALLOWED 2
 
 /* sensor granularity is 18mG, so this is +/- 18 steps */
-#define TOLERANCE (8 * 18)
+//#define TOLERANCE (8 * 18)
+#define TOLERANCE 200
 
 void oltk_fill_rect(struct oltk *oltk, int x, int y, unsigned int width, unsigned int height, int color);
 
@@ -149,14 +150,13 @@ err2:
 }
 #endif
 
-
 static void do_sensor_test(void)
 {
 	int fdtop, fdbot;
 	struct input_event ev;
-	fd_set fds;
+	fd_set fds_top, fds_bot;
 	struct timeval tv;
-	int coords[2][3]; /* two sets of X, Y, Z */
+	int coords[2][3], fail_value[2][3]; /* two sets of X, Y, Z */
 	int seen[2], fail[2];
 	int updates_before_exit = SAMPLES_NEEDED * 10;
 	char buf[200];
@@ -171,75 +171,104 @@ static void do_sensor_test(void)
 		goto err2;
 
 	memset(coords, 0, sizeof(coords));
+	memset(fail_value, 0, sizeof(fail_value));
 	memset(seen, 0, sizeof(seen));
 	memset(fail, 0, sizeof(fail));
 
 	/* get some motion input data stored up */
-	usleep(10000);
+	//usleep(10000);
+	countdown(1, FALSE);
 
-	while (1) {
-		FD_ZERO(&fds);
-		FD_SET(fdtop, &fds);
-		FD_SET(fdbot, &fds);
+	do {
+		FD_ZERO(&fds_top);
+		FD_ZERO(&fds_bot);
+		FD_SET(fdtop, &fds_top);
+		FD_SET(fdbot, &fds_bot);
 		tv.tv_sec = 0;
 		tv.tv_usec = 50000;
 
-		if (select(fdbot + 1, &fds, NULL, NULL, &tv) <= 0)
-			goto again;
+		if (select(fdtop + 1, &fds_top, NULL, NULL, &tv) <= 0)
+			//goto again;
+			continue;
 
-		if (FD_ISSET(fdtop, &fds)) {
+		if (FD_ISSET(fdtop, &fds_top)) {
 			read (fdtop, &ev, sizeof (struct input_event));
 			if (ev.type != 2)
-				goto top_bail;
+				goto top_fail;
 			coords[0][ev.code] = ev.value;
 			if (ev.code != 2)
-				goto top_bail;
+				goto top_fail;
 			seen[0]++;
-			if ((coords[0][0] > TOLERANCE) ||
+			if ((coords[0][0] > TOLERANCE) || 
 			    (coords[0][0] < -TOLERANCE) ||
 			    (coords[0][1] > TOLERANCE) ||
 			    (coords[0][1] < -TOLERANCE) ||
-			    (coords[0][2] > (1000 + TOLERANCE)) ||
-			    (coords[0][2] < (1000 - TOLERANCE)))
+			    (coords[0][2] > (1000 + TOLERANCE)) || 
+			    (coords[0][2] < (1000 - TOLERANCE))) { 
 				fail[0]++;
+				memcpy(fail_value[0], coords[0], sizeof(coords[0]));
+			}
 		}
-top_bail:
-		if (FD_ISSET(fdbot, &fds)) {
+top_fail:
+		if (select(fdbot + 1, &fds_bot, NULL, NULL, &tv) <= 0)
+			//goto again;
+			continue;
+
+		if (FD_ISSET(fdbot, &fds_bot)) {
 			read (fdbot, &ev, sizeof (struct input_event));
 			if (ev.type != 2)
-				goto again;
+				goto bot_fail;
 			coords[1][ev.code] = ev.value;
 			if (ev.code != 2)
-				goto again;
+				goto bot_fail;
+			seen[1]++;
+			if ((coords[1][0] > TOLERANCE) ||
+			    (coords[1][0] < -TOLERANCE) ||
+			    (coords[1][1] > TOLERANCE) ||
+			    (coords[1][1] < -TOLERANCE) ||
+			    (coords[1][2] > (1000 + TOLERANCE)) ||
+			    (coords[1][2] < (1000 - TOLERANCE)))	{
+				fail[1]++;
+				memcpy(fail_value[1], coords[1], sizeof(coords[1]));
+			}
 		}
 
-again:
-		if (updates_before_exit--)
-			continue;
+bot_fail:
+	updates_before_exit--;
+	} while(updates_before_exit);
 
 		/* test completed */
 
-		close(fdtop);
-		close(fdbot);
+	close(fdtop);
+	close(fdbot);
 
-		if ((seen[0] < SAMPLES_NEEDED) || (fail[0] > BAD_SAMPLES_ALLOWED))
-			i += sprintf(&buf[i], "Top sensor FAIL (%d/%d, %d/%d)\n",
-					seen[0], SAMPLES_NEEDED, fail[0],
-					BAD_SAMPLES_ALLOWED);
-		else
-			i += sprintf(&buf[i], "Top sensor PASS\n");
+	if ((seen[0] < SAMPLES_NEEDED) || (fail[0] >= BAD_SAMPLES_ALLOWED))
+		i += sprintf(&buf[i], "Top sensor FAIL\n"
+					"    (%d/%d, %d/%d)\n"
+					"    (X: %d, Y: %d, Z: %d)\n\n",
+				seen[0], SAMPLES_NEEDED, fail[0],
+				BAD_SAMPLES_ALLOWED,
+				fail_value[0][0], fail_value[0][1], fail_value[0][2]);
+	else
+		i += sprintf(&buf[i], "Top sensor PASS\n(X: %d, Y: %d, Z: %d)\n\n",
+				coords[0][0], coords[0][1], coords[0][2]);
 
-		if ((seen[0] < SAMPLES_NEEDED) || (fail[0] > BAD_SAMPLES_ALLOWED))
-			i += sprintf(&buf[i], "Bot sensor FAIL (%d/%d, %d/%d)\n",
-					seen[0], SAMPLES_NEEDED, fail[0],
-					BAD_SAMPLES_ALLOWED);
-		else
-			i += sprintf(&buf[i], "Bot sensor PASS\n");
+	if ((seen[1] < SAMPLES_NEEDED) || (fail[1] >= BAD_SAMPLES_ALLOWED))
+		i += sprintf(&buf[i], "Bot sensor FAIL\n"
+					"    (%d/%d, %d/%d)\n"
+					"    (X: %d, Y: %d, Z: %d)\n",
+				seen[1], SAMPLES_NEEDED, fail[1],
+				BAD_SAMPLES_ALLOWED,
+				fail_value[1][0], fail_value[1][1], fail_value[1][2]);
+	else
+		i += sprintf(&buf[i], "Bot sensor PASS\n(X: %d, Y: %d, Z: %d)\n",
+				coords[1][0], coords[1][1], coords[1][2]);
 
-		oltk_view_set_text(view, buf);
-		oltk_redraw(oltk);
-		return;
-	}
+	//printf("[Motion] Get Result:\n%s\n", buf);
+
+	oltk_view_set_text(view, buf);
+	oltk_redraw(oltk);
+	return;
 
 err1:
 	oltk_view_set_text(view,"Top Sensor Fail");
@@ -249,6 +278,7 @@ err1:
 err2:
 	oltk_view_set_text(view,"Bottom Sensor Fail");
 	oltk_redraw(oltk);
+	return;
 }
 
 
