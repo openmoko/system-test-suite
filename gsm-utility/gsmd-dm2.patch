@@ -1,0 +1,75 @@
+Index: include/libgsmd/misc.h
+===================================================================
+--- include/libgsmd/misc.h	(revision 4442)
++++ include/libgsmd/misc.h	(working copy)
+@@ -80,4 +80,7 @@
+ /* Get Antenna Power status */
+ extern int lgsm_get_power_status(struct lgsm_handle *lh);
+ 
++/* Production Only For TI - searching 1900 band only */
++int lgsm_band_1900(struct lgsm_handle *lh);
++
+ #endif
+Index: include/gsmd/usock.h
+===================================================================
+--- include/gsmd/usock.h	(revision 4442)
++++ include/gsmd/usock.h	(working copy)
+@@ -171,6 +171,7 @@
+ 	GSMD_NETWORK_PREF_ADD   = 13,
+ 	GSMD_NETWORK_PREF_SPACE = 14,
+ 	GSMD_NETWORK_QUERY_REG  = 15,
++	GSMD_NETWORK_BAND_1900	= 16,
+ };
+ 
+ enum gsmd_msg_sms {
+Index: src/libgsmd/libgsmd_network.c
+===================================================================
+--- src/libgsmd/libgsmd_network.c	(revision 4442)
++++ src/libgsmd/libgsmd_network.c	(working copy)
+@@ -177,3 +177,9 @@
+ {
+ 	return lgsm_send_simple(lh, GSMD_MSG_NETWORK, GSMD_NETWORK_VMAIL_GET);
+ }
++
++/* Production Only For TI - searching 1900 band only */
++int lgsm_band_1900(struct lgsm_handle *lh)
++{
++	return lgsm_send_simple(lh, GSMD_MSG_NETWORK, GSMD_NETWORK_BAND_1900);
++}
+Index: src/gsmd/usock.c
+===================================================================
+--- src/gsmd/usock.c	(revision 4448)
++++ src/gsmd/usock.c	(working copy)
+@@ -1219,6 +1219,10 @@
+ 		cmd = atcmd_fill("AT+CNUM", 7 + 1,
+ 				&network_ownnumbers_cb, gu, 0, NULL);
+ 		break;
++	case GSMD_NETWORK_BAND_1900:
++		cmd = atcmd_fill("AT%BAND=1,4", 11 + 1,
++				&null_cmd_cb, gu, 0, NULL);
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+Index: src/util/shell.c
+===================================================================
+--- src/util/shell.c	(revision 4442)
++++ src/util/shell.c	(working copy)
+@@ -604,6 +604,7 @@
+ 		"\tCFQ\tQuery the status of call forwarding (CFQ=reason)\n"
+ 		"\tCFR\tRegister call forwarding (CFR=reason,number)\n"
+ 		"\tCFe\tErase a record of call forwarding (CFe=reason)\n"
++		"\tB\tBand 1900 only\n"
+ 		"\tq\tQuit\n"
+ 		);
+ }
+@@ -1024,6 +1025,9 @@
+ 				printf("Battery Connection status and Battery Charge Level\n");
+ 				lgsm_get_battery(lgsmh);
+ 				pending_responses++;
++			}else if ( !strncmp(buf, "B", 1)) {
++				printf("Searching band 1900 only \n");
++				lgsm_band_1900(lgsmh);
+ 			}else {
+ 				printf("Unknown command `%s'\n", buf);
+ 			}

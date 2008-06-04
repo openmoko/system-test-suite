@@ -5,10 +5,12 @@ BUSYBOX=busybox-1.10.2
 BUSYBOX_HOST=http://busybox.net/downloads
 BUSYBOX_SRC=${BUSYBOX}.tar.bz2
 
+ARM_LIB_PATH=/usr/local/openmoko/arm/arm-angstrom-linux-gnueabi/lib
+
 #GSM=gsm
 
-all: target_rootfs_base etc_data_install dev_node_build \
-	download_src busybox_build
+all: target_rootfs_base etc_data_install copy_lib \
+	dev_node_build download_src busybox_build
 
 clean: busybox_clean dev_node_clean etc_data_remove
 
@@ -31,7 +33,8 @@ target_rootfs_base:
 		 mnt sys usr boot home media opt root srv var tmp
 
 etc_data_install:
-	@cp -frp target_rootfs_data/etc target_rootfs/
+	@cp -fr target_rootfs_data/etc target_rootfs/ && \
+	chmod 755 target_rootfs/etc/init.d/*
 
 etc_data_remove:
 	@rm -fr target_rootfs/etc/*
@@ -48,6 +51,25 @@ download_src:
 	#	cd sources && \
 	#	svn co http://svn.openmoko.org/trunk/src/target/${GSM}; \
 	#fi
+
+copy_lib:
+	@cp -fr \
+	${ARM_LIB_PATH}/ld-2.5.so	${ARM_LIB_PATH}/ldscripts \
+	${ARM_LIB_PATH}/libc-2.5.so	${ARM_LIB_PATH}/libc.a \
+	${ARM_LIB_PATH}/libc.so		${ARM_LIB_PATH}/libdl-2.5.so \
+	${ARM_LIB_PATH}/libdl.a		${ARM_LIB_PATH}/libcrypt-2.5.so \
+	${ARM_LIB_PATH}/libcrypt.a 	${ARM_LIB_PATH}/libm-2.5.so \
+	${ARM_LIB_PATH}/libm.a \
+	target_rootfs/lib && \
+	cd target_rootfs/lib && \
+	ln -fs ld-2.5.so ld-linux.so.3 && \
+	ln -fs libc-2.5.so libc.so.6 && \
+	ln -fs libdl-2.5.so libdl.so && \
+	ln -fs libdl-2.5.so libdl.so.2 && \
+	ln -fs libcrypt-2.5.so libcrypt.so.1 && \
+	ln -fs libcrypt.so.1 libcrypt.so && \
+	ln -fs libm-2.5.so libm.so.6 && \
+	ln -fs libm-2.5.so libm.so
 
 busybox_build:
 	@if [ ! -d ${BUSYBOX} ]; then \

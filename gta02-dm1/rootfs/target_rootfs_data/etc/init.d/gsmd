@@ -8,21 +8,20 @@
 
 PATH=/bin:/usr/bin:/sbin:/usr/sbin
 
-GSMD_OPTS="-s 115200 -F"
-GSM_POW="/sys/bus/platform/devices/gta01-pm-gsm.0/power_on"
-GSM_RES="/sys/bus/platform/devices/gta01-pm-gsm.0/reset"
-GSM_DEV="/dev/ttySAC0"
-GSM_DL="/sys/devices/platform/neo1973-pm-gsm.0/download"
+[ -f /etc/default/rcS ] && . /etc/default/rcS
+[ -f /etc/default/gsmd ] && . /etc/default/gsmd
 
 case "$1" in
     start)
-        echo "0" >$GSM_POW; sleep 1 
-        echo "1" >$GSM_POW; sleep 1 
-        echo "1" >$GSM_RES; sleep 1 
-        echo "0" >$GSM_RES; sleep 2 
+        [ -n "$GSM_POW" ] && ( echo "0" >$GSM_POW; sleep 1 )
+        [ -n "$GSM_POW" ] && ( echo "1" >$GSM_POW; sleep 1 )
+        [ -n "$GSM_RES" ] && ( echo "1" >$GSM_RES; sleep 1 )
+        [ -n "$GSM_RES" ] && ( echo "0" >$GSM_RES; sleep 2 )
 
         echo -n "Starting GSM daemon: "
-       /bin/gsmd -p $GSM_DEV $GSMD_OPTS -d -l syslog & 
+        start-stop-daemon -S -x /usr/sbin/gsmd -- gsmd -p $GSM_DEV $GSMD_OPTS &
+        #start-stop-daemon -S -x /usr/sbin/gsmd -- gsmd -p $GSM_DEV $GSMD_OPTS -d -l syslog
+        #/usr/sbin/gsmd -p $GSM_DEV $GSMD_OPTS > /tmp/gsm.log &
 
         if [ $? = 0 ]; then
             echo "gsmd."
@@ -31,10 +30,10 @@ case "$1" in
         fi
         ;;
     stop)
-        echo "0" >$GSM_POW
+        [ -n "$GSM_POW" ] && echo "0" >$GSM_POW
 
         echo -n "Stopping GSM daemon: "
-        start-stop-daemon -K -x /bin/gsmd
+        start-stop-daemon -K -x /usr/sbin/gsmd
         echo "gsmd."
         ;;
     restart|force-reload)

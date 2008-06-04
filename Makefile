@@ -48,6 +48,43 @@ dump_setting:
 	@echo ""
 
 # all ##########
+download_git:
+	if [ ! -d ${BASE_DIR}/download_git ]; then \
+		mkdir download_git; \
+	fi 
+	cd ${BASE_DIR}/download_git && \
+	if [ ! -d linux-2.6 ]; then \
+		git clone git://git.openmoko.org/git/kernel.git linux-2.6; \
+	fi && cd linux-2.6 && \
+	if [ ! -e ../.checkout_ver_andy_kernel ]; then \
+		git checkout origin/andy && \
+		touch ../.checkout_ver_andy_kernel; \
+	fi 
+	cd ${BASE_DIR}/download_git && \
+	if [ ! -d u-boot ]; then \
+		git clone git://git.openmoko.org/git/u-boot.git u-boot; \
+	fi && cd u-boot && \
+	if [ ! -e ../.checkout_ver_andy_uboot ]; then \
+		git checkout origin/andy && \
+		touch ../.checkout_ver_andy_uboot; \
+	fi
+
+.PHONY: gsm_utility_build
+gsm_utility_build:
+	@cd ${BASE_DIR}/gsm-utility && \
+	if [ ! -d gsm ]; then \
+		svn co http://svn.openmoko.org/trunk/src/target/gsm; \
+	fi && \
+	cd gsm && \
+	if [ ! -e .patched_done ]; then \
+		patch -p0 < ../gsmd-dm2.patch && \
+		touch .patched_done; \
+	fi && \
+	./autogen.sh && mkdir -p build && \
+	./configure --host=arm-angstrom-linux-gnueabi --prefix=/usr && \
+	make && make DESTDIR=${PWD}/gsm-utility/build install
+
+
 .PHONY: gta02-dm1-mkdir-tmp
 gta02-dm1-mkdir-tmp:
 	@if [ ! -d ${GTA02_DM1_DIR}/tmp ]; then \
@@ -61,61 +98,21 @@ gta02-dm1-build-kernel-include-rootfs: gta02-dm1-mkdir-tmp
 	echo "##### maybe you need input password for sudo #####" && \
 	sudo cp main \
 		${GTA02_DM1_DIR}/rootfs/target_rootfs/sbin && \
-	sudo cp gsmd libgsmd-tool \
-		${GTA02_DM1_DIR}/rootfs/target_rootfs/bin && \
+	cd ${GTA02_DM1_DIR}/rootfs/target_rootfs && \
+	sudo cp -fr ${BASE_DIR}/gsm-utility/build/* ./ && \
 	cd ${GTA02_DM1_DIR}/tmp && \
-	if [ ! -e ./linux-2.6.22.5.tar.bz2 ]; then \
-		wget ${DL_KERNEL_SRC}; \
+	if [ ! -d linux-2.6 ]; then \
+		cp -fr ${BASE_DIR}/download_git/linux-2.6 ./ ; \
 	fi && \
-	if [ ! -d ./svn_kernel ]; then \
-		svn co http://svn.openmoko.org/trunk/src/target/kernel && \
-		mv -f kernel svn_kernel; \
-	fi
-	@cd ${GTA02_DM1_DIR}/tmp/svn_kernel && \
-	if [ ! -e ./scripts/build.modify_for_dm1 ]; then \
-		cd ${GTA02_DM1_DIR}/tmp/svn_kernel && \
-		sed  's/# KERNEL=${BI_KERNEL_VER}/KERNEL=${BI_KERNEL_VER}/g' \
-			./scripts/build > ./scripts/build.enable_kernel_ver && \
-		sed 's/# KERNELSRC_DIR=\/wherever/KERNELSRC_DIR=$$\{PWD\}\/..\//g' \
-			./scripts/build.enable_kernel_ver > \
-			./scripts/build.enable_kernel_ver.detect_path && \
-		sed 's/SVN\/trunk\/src\/target\/kernel/\{PWD\}\/../g' \
-			./scripts/build.enable_kernel_ver.detect_path > \
-			./scripts/build.enable_kernel_ver.detect_path.modify_patch_path && \
-		sed 's/^make ARCH=arm/# make ARCH=arm/g' \
-			./scripts/build.enable_kernel_ver.detect_path.modify_patch_path > \
-			./scripts/build.modify_for_dm1 && \
-		chmod 755 ./scripts/build.modify_for_dm1; \
-	fi
-	@cd ${GTA02_DM1_DIR}/tmp/svn_kernel && \
-	if [ ! -e ${GTA02_DM1_DIR}/tmp/svn_kernel/linux-${BI_KERNEL_VER}/first-patch-done ]; then \
-		./scripts/build.modify_for_dm1 && \
-		echo "done" > ${GTA02_DM1_DIR}/tmp/svn_kernel/linux-${BI_KERNEL_VER}/first-patch-done; \
-	fi
-	@cd ${GTA02_DM1_DIR}/tmp/svn_kernel && \
-	if [ ! -d linux-${BI_KERNEL_VER} ]; then \
-		tar -xjf ${GTA02_DM1_DIR}/tmp/linux-${BI_KERNEL_VER}.tar.bz2; \
-	fi && \
-	cd ${GTA02_DM1_DIR}/tmp/svn_kernel/linux-${BI_KERNEL_VER} && \
-	if [ ! -e ./.dm1_patched_done ]; then \
-		rm patches && \
-		cd ${GTA02_DM1_DIR}/kernel_module && \
-		./setup-kernel.sh ../tmp/svn_kernel/linux-${BI_KERNEL_VER} && \
-		cd ${GTA02_DM1_DIR}/tmp/svn_kernel/linux-${BI_KERNEL_VER} && \
-		echo "${GTA02_DM1_DIR}/rootfs/target_rootfs" > pwd.txt && \
-			sed 's/\//\\\//g' pwd.txt > pwd.txt.done && \
-		sed "s/\/gta02\/pbe\/rootfs/`cat pwd.txt.done`/g" .config \
-		> config.modifyed && mv config.modifyed .config && \
-		rm pwd.txt pwd.txt.done && \
-		echo "done" > ./.dm1_patched_done; \
-	fi
-	@cd ${GTA02_DM1_DIR}/tmp/svn_kernel/linux-${BI_KERNEL_VER} && \
+	cp ../kernel_config/defconfig-2.6.24-DM1 ./linux-2.6/.config && \
+	echo ${PWD} | sed "s/\//\\\\\//g" - \
+                | sed "s/\$$/\\\\\/gta02-dm1\\\\\/rootfs\\\\\/target_rootfs/g" - \
+		> path.txt && \
+        sed "s/_SETTING_NEW_PATH_TO_ME_/`cat path.txt`/g" ./linux-2.6/.config > \
+		./linux-2.6/.config_done && \
+	mv ./linux-2.6/.config_done ./linux-2.6/.config && cd linux-2.6 && \
 	export PATH=${PATH}:${GTA02_DM1_DIR}/tmp/u-boot/tools && \
-	if [ ! -e .load_oldconfig_done ]; then \
-		make ARCH=arm CROSS_COMPILE=${GTA02_CROSS} oldconfig && \
-		touch .load_oldconfig_done; \
-	fi && \
-	make ARCH=arm CROSS_COMPILE=${GTA02_CROSS} uImage -j 2 && \
+	make ARCH=arm CROSS_COMPILE=${GTA02_CROSS} uImage -j 4 && \
 	${GTA02_CROSS}objcopy -O binary -R .note -R .comment \
 		-S arch/arm/boot/compressed/vmlinux linux.bin && \
 	mkimage -A arm -O linux -T kernel -C none -a 30008000 \
