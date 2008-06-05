@@ -146,11 +146,7 @@ int main(int argc, char **argv)
 
 	if (!strcmp(argv[1], "GSM")) {
 		printf("[GSM] start test\n");
-		/* gsm_test(); */
-		printf(" print GSM firmware version: \n");		
-		/* system("echo AT+CGMR > printCGMR");	*/
-		system("libgsmd-tool -m atcmd<printCGMR ");
-	
+		gsm_test();
 		printf("[GSM] end test\n");
 	}
 
@@ -183,6 +179,11 @@ int main(int argc, char **argv)
 		printf("[BATTERY] start test\n");
 		battery_test();
 		printf("[BATTERY] end test\n");
+	}
+
+	if (!strcmp(argv[1], "version")) {
+		printf("built: %s, %s. by: cdplayer12\n",
+			__DATE__, __TIME__);
 	}
 
 	return 0;

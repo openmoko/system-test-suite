@@ -11,9 +11,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <termios.h>
+#include <errno.h>
 
 #include "dm_init.h"
-
+#define GPS_POWER "/sys/bus/platform/drivers/neo1973-pm-gps/neo1973-pm-gps.0/pwron"
+#define GPS_DEVICE "/dev/ttySAC1"
 struct nmea_gsv {
 	char sentence[8];
 	char nose[4];
@@ -28,7 +30,7 @@ struct nmea_gsv {
 #define BUFSIZ 128*4
 #endif
 
-#define GPS_DEVICE			"/dev/ttySAC1"
+//#define GPS_DEVICE			"/dev/ttySAC1"
 #define GPS_TEST_TIME	60*3
 
 #define GGA "$GPGGA"
@@ -40,35 +42,34 @@ struct nmea_gsv {
 #define VTG "$GPVTG"
 #define LOR "$PGLOR"
 
-//int GPGGA(char* str, struct nmea_gga* gga);
 int GPGSV(char* str, struct nmea_gsv* gsv);
-//int GPGSA(char* str, struct nmea_gsa* gsa);
-
 static char delim[] = ",*";
-static char line_buffer[1024] = { 0 };
+static char line_buffer[2048] = { 0 };
 static struct nmea_gsv n_gsv[3];
 int pass = 0;
-static int poweron_process(void)
 
+static int poweron_process(void)
 {
-	int res,vol=0,i=0,j=0,mul;
-	char *reqbuf=NULL,*tp=NULL,vol2;
-	//char reqbuf[128];
+	int res,vol=0;
+	char *reqbuf=NULL;
 	FILE *fp=NULL;
-// /sys/bus/i2c/drivers/pcf50633/0-0073/neo1973-pm-gps.0/ 
-	fp	= fopen("/sys/devices/platform/neo1973-pm-gps.0/power_on", "w");	
-	if (NULL == fp)
+	int l_fp;
+	l_fp = open(GPS_POWER, O_WRONLY);
+	if (l_fp == -1)
     	{
         return printf("[GPS] Can't Open GPS sysfs power control\r\n");
     	}
-	res = fwrite("1",sizeof(char),1, fp);
-	fclose(fp);
+	res = write(l_fp, "0",sizeof(char));
+	sleep(1);
+	res = write(l_fp, "1",sizeof(char));
+	close(l_fp);
 
-	fp	= fopen("/sys/devices/platform/neo1973-pm-gps.0/power_on", "r");	
+	fp	= fopen(GPS_POWER, "r");	
 	reqbuf = malloc(BUFSIZ);
 	memset(reqbuf,0,BUFSIZ);	
 	res = fread(reqbuf, sizeof(char),BUFSIZ, fp);		
-	//printf("res =%d ,%s\n",res,reqbuf);
+//	printf("%s():%d: res = %d ,%s\n", __FUNCTION__, __LINE__, res, reqbuf);
+/*
 	if (res != 0)
 	{
 		while (i < res)
@@ -85,26 +86,30 @@ static int poweron_process(void)
 	i = res - i -1;
 	for (;i>0;i--)
 	{	
-		mul = 1;			
+		mul = 1;
 		for (j=i;j>1;j--)
 			mul = mul*10; 			
 		vol2 = *tp -0x30;		
 		vol = vol+ ( vol2 * mul);
 		tp++;	
 	} 
+*/
 	//printf("vol=%d\n",vol);
-	if (reqbuf[0] == '1' && vol == 3000)
+	//if (reqbuf[0] == '1' && vol == 3000)
+	if (reqbuf[0] == '1')
 	{
-		printf("[GPS] Power on ok ; PMU %s",&reqbuf[3]);
+		printf("[GPS] Power on ok ; PMU %s\n",&reqbuf[3]);
 		free(reqbuf);
 		return 1;
 	}	
 	else
 	{	
-		printf("[GPS] Power on failed ; PMU %s",&reqbuf[3]);
+		printf("[GPS] Power on failed ; PMU %s(%c, %d)\n",&reqbuf[3],
+					reqbuf[0], vol);
 		free(reqbuf);	
 		return 0;	
 	}
+
 }
 
 static void ttydevice_setting(char on)
@@ -143,64 +148,11 @@ static void ttydevice_setting(char on)
 	tcsetattr(fd, TCSANOW, &ti);
 	close(fd);
 }
-/*
-static void agps_nmea_read(char* buf)
-{
-    char* p;
 
-	if ((strlen(buf) + strlen(line_buffer)) < sizeof(line_buffer) - 1)
-    	{
-        strcat(line_buffer, buf);
-    	}
-   else
-    	{
-        printf("Discarding \"%s\"\n", buf);
-    	}
-
-   do
-    	{
-		char tmp[1024];
-		unsigned int s;
-
-		p = strchr(line_buffer, '\n');
-		if (!p)
-			return;
-
-		p++;
-		s = p - line_buffer;
-
-		if (s < sizeof(tmp) - 1)
-        	{
-	    	if (s > 1)
-	    		{
-				memcpy(tmp, line_buffer, s);
-				tmp[s] = '\0';
-
-				//agps_nmea_process_(label, tmp);
-	    		}
-        	}
-      else
-        	{
-	    	line_buffer[s - 1] = '\0';
-         printf("Discarding long \"%s\"\n", line_buffer);
-        	}
-
-		s = strlen(p);
-		if (s > 0)
-			memmove(line_buffer, p, s);
-		line_buffer[s] = '\0';
-    	}
-	while (p);
-}
-*/
 static int gps_nmea_verify(int fd,char* buf)
 {
 	char *p,*s;
-	//int i,res, j=0, k=0;	
 	int res;	
-	//char tmp[512];
-	//char tmp3[32];
-	memset(line_buffer,0,1024);
 	while(1)
 	{
 		memset(line_buffer, 0, sizeof(line_buffer));
@@ -244,7 +196,6 @@ static int gps_nmea_check(int fd,char* buf)
 		printf("[GPS] NMEA data receive failed\n");
 		return 0; 
 	}
-
 	if (strstr(buf,GSV))
 	{		
 		memset((gsv), 0, sizeof(struct nmea_gsv));
@@ -286,17 +237,15 @@ void gps_test(void)
 	//Cold start testing
 	ttydevice_setting(1);
 	res = write(fd,coldstart_stop,12);	
-	sleep(1);	
+	sleep(5);	
 	res = read(fd,buf,BUFSIZ);
 	memset(buf,0,BUFSIZ);
-	res = read(fd,buf,BUFSIZ);
-	//printf("read res =%d",res);
-	if(buf != NULL)
+	if(!res)
 	{
 		printf("[GPS] Cold start testing failed 00\n");
 		return; 
 	}
-	res = write(fd,coldstart_start,12);	
+	res = write(fd,coldstart_start,12);
 	sleep(1);
 	ttydevice_setting(0);
 	if(!gps_nmea_verify(fd,buf))
@@ -364,17 +313,13 @@ int GPGSV(char* str, struct nmea_gsv* gsv)
                 //int el  = atoi(gsv->sate[j][1]);
                 //int az  = atoi(gsv->sate[j][2]);
                 int CN0 = atoi(gsv->sate[j][3]);
-
                 printf("PRN= %d, CN: %d\n", prn, CN0);
-
-					if(CN0 >= 45) return 1;
-
+		if(CN0 >= 45) return 1;
                 k = 0;                  
                 ++j;                       
             }			
-            if (checksum)
-            {               
-					 gsv->n = j; 
+            if (checksum)	{            
+		gsv->n = j; 
                 i = 5;
             }   
             break;					
@@ -382,5 +327,4 @@ int GPGSV(char* str, struct nmea_gsv* gsv)
     }
     return 0;
 }
-
 

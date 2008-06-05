@@ -83,25 +83,11 @@ busybox_build:
 	make ARCH=arm CROSS_COMPILE=${CROSS}- oldconfig && \
 	make ARCH=arm CROSS_COMPILE=${CROSS}- -j 3 && \
 	make ARCH=arm CROSS_COMPILE=${CROSS}- install
-	@cd target_rootfs && ln -s sbin/init init
+	@cd target_rootfs && ln -sf sbin/init init
 
 busybox_clean:
 	@cd ${BUSYBOX} && make clean
 	@rm -f target_rootfs/init
-
-#gsm_build:
-#	if [ ! -d ${GSM} ]; then \
-#		cp -frp sources/${GSM} ./ ; \
-#	fi
-#	cd ${GSM} && \
-#	if [ ! -e .patched_done ]; then \
-#		patch -p0 < ../sources/gsmd-dm2.patch && \
-#		touch .patched_done; \
-#	fi && \
-#	./autogen.sh && \
-#	./configure CFLAGS="-g -O2 -static" --host=${CROSS} \
-#		--prefix=/usr --enable-static --disable-shared && \
-#	make CFLAGS="-g -O2 -static" -j 3
 
 dev_node_build:
 	@cd target_rootfs/dev && \

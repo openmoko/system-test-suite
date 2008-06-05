@@ -59,7 +59,10 @@ static int cmdq_test(struct glamo_dma_manager *dma)
 
 		glamo_dma_flush(dma);
 
+		usleep(1);
 		val = GLAMO_IN_REG(GLAMO_REG_CMDQ_WRITE_ADDRL);
+		/* printf("%s(): %d: i: %d, val: %d, dma->w: %d\n", 
+			__func__, __LINE__, i, val, dma->w << 1); */
 		if (val != dma->w << 1)
 		{
 			REPORT_FAIL("CMDQ");

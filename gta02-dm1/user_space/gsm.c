@@ -8,6 +8,7 @@
 #include <signal.h>
 #include <errno.h>
 
+#if 0
 #ifndef _POSIX_SOURCE
 #define _POSIX_SOURCE 1
 #endif
@@ -172,5 +173,11 @@ void gsm_test(void)
 	close_uart();
 
 	free(ret_buf);
+}
+#endif
+
+void gsm_test(void)
+{
+	system("echo at+cgmr | libgsmd-tool -m atcmd");
 }
 
