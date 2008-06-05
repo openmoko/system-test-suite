@@ -10,15 +10,16 @@ GTA02_DM2_TARGET = dm2.bin
 GTA02_RELEASE_DIR = ${BASE_DIR}/release_data
 GTA02_VERSION_FILE = ${BASE_DIR}/setting_dm_version
 
-BI_KERNEL_VER = 2.6.22.5
-BI_KERNEL_SITE = http://www.kernel.org
-DL_KERNEL_SRC = ${BI_KERNEL_SITE}/pub/linux/kernel/v2.6/linux-${BI_KERNEL_VER}.tar.bz2 
+#BI_KERNEL_VER = 2.6.22.5
+#BI_KERNEL_SITE = http://www.kernel.org
+#DL_KERNEL_SRC = ${BI_KERNEL_SITE}/pub/linux/kernel/v2.6/linux-${BI_KERNEL_VER}.tar.bz2 
 
 export GTA02_VERSION_FILE ;
 
 GTA02_CROSS = "arm-angstrom-linux-gnueabi-"
 
-all: verify_version_setup gta02-dm1-dummy gta02-dm2
+#all: verify_version_setup download_git gsm_utility_build gta02-dm1-dummy gta02-dm2
+all: verify_version_setup download_git gsm_utility_build gta02-dm2
 
 # test #########
 
@@ -99,17 +100,20 @@ gta02-dm1-build-kernel-include-rootfs: gta02-dm1-mkdir-tmp
 	sudo cp main \
 		${GTA02_DM1_DIR}/rootfs/target_rootfs/sbin && \
 	cd ${GTA02_DM1_DIR}/rootfs/target_rootfs && \
-	sudo cp -fr ${BASE_DIR}/gsm-utility/build/* ./ && \
+	cp -fr ${BASE_DIR}/gsm-utility/build/* ./ && \
 	cd ${GTA02_DM1_DIR}/tmp && \
 	if [ ! -d linux-2.6 ]; then \
 		cp -fr ${BASE_DIR}/download_git/linux-2.6 ./ ; \
 	fi && \
-	cp ../kernel_config/defconfig-2.6.24-DM1 ./linux-2.6/.config && \
+	cp ./linux-2.6/defconfig-2.6.24 ./linux-2.6/.config && \
+	sed "/CONFIG_INITRAMFS_SOURCE/c\CONFIG_INITRAMFS_SOURCE=\"_SETTING_NEW_PATH_TO_ME_\"" ./linux-2.6/.config | \
+	sed "/CONFIG_INITRAMFS_SOURCE/a\CONFIG_INITRAMFS_ROOT_UID=0\nCONFIG_INITRAMFS_ROOT_GID=0" - | \
+	sed "/CONFIG_SND_S3C24XX_SOC_NEO1973_WM8753/a\# CONFIG_SND_S3C24XX_SOC_NEO1973_WM8753_DEBUG is not set" - > ./linux-2.6/.config_pre_setting && \
 	echo ${PWD} | sed "s/\//\\\\\//g" - \
                 | sed "s/\$$/\\\\\/gta02-dm1\\\\\/rootfs\\\\\/target_rootfs/g" - \
 		> path.txt && \
-        sed "s/_SETTING_NEW_PATH_TO_ME_/`cat path.txt`/g" ./linux-2.6/.config > \
-		./linux-2.6/.config_done && \
+        sed "s/_SETTING_NEW_PATH_TO_ME_/`cat path.txt`/g" ./linux-2.6/.config_pre_setting > \
+		./linux-2.6/.config_done && rm path.txt ./linux-2.6/.config_pre_setting && \
 	mv ./linux-2.6/.config_done ./linux-2.6/.config && cd linux-2.6 && \
 	export PATH=${PATH}:${GTA02_DM1_DIR}/tmp/u-boot/tools && \
 	make ARCH=arm CROSS_COMPILE=${GTA02_CROSS} uImage -j 4 && \
@@ -138,8 +142,8 @@ gta02-dm1-build-nor-uboot: gta02-dm1-mkdir-tmp
 		svn co http://svn.openmoko.org/trunk/src/host/splash; \
 	fi && \
 	if [ ! -e ./u-boot/.git/HEAD ]; then \
-		git clone git://git.openmoko.org/git/u-boot.git && \
-		cd u-boot && git checkout origin/andy && \
+		cp -fr ${BASE_DIR}/download_git/u-boot ./ && \
+		cd u-boot && \
 		cd ${GTA02_DM1_DIR}/tmp; \
 	fi && \
 	if [ ! -e ./devirginator/System_boot.png ]; then \
@@ -173,7 +177,7 @@ gta02-dm1: gta02-dm1-mkdir-tmp gta02-dm1-build-nor-uboot \
 	@cd ${GTA02_DM1_DIR}/tmp && \
 	tar -xzf ../GTA02-P-version.tar.gz && \
 	echo ${GTA02_DM_RELEASE_VERSION} > GTA02-DM1/version && \
-	cp ${GTA02_DM1_DIR}/tmp/svn_kernel/linux-${BI_KERNEL_VER}/uImage.bin \
+	cp ${GTA02_DM1_DIR}/tmp/linux-2.6/uImage.bin \
 		GTA02-DM1/tmp/uImage.bin && \
 	cp ${GTA02_DM1_DIR}/tmp/u-boot/u-boot.udfu \
 		./GTA02-DM1/tmp/u-boot.bin && \
@@ -254,7 +258,7 @@ gta02-dm1-build-kernel-include-rootfs-clean:
 	if [ -d ${GTA02_DM1_DIR}/tmp/rootfs ]; then \
 		sudo rm -fr ${GTA02_DM1_DIR}/tmp/rootfs; \
 	fi
-	cd ${GTA02_DM1_DIR}/tmp/svn_kernel/linux-${BI_KERNEL_VER} && \
+	cd ${GTA02_DM1_DIR}/tmp/linux-2.6 && \
 	make ARCH=arm CROSS_COMPILE=${GTA02_CROSS} clean
 
 .PHONY: gta02-dm1-build-nor-uboot-clean
