@@ -142,13 +142,20 @@ gta02-dm1-build-nor-uboot: gta02-dm1-mkdir-tmp
 		svn co http://svn.openmoko.org/trunk/src/host/splash; \
 	fi && \
 	if [ ! -e ./u-boot/.git/HEAD ]; then \
-		cp -fr ${BASE_DIR}/download_git/u-boot ./ && \
-		cd u-boot && \
-		cd ${GTA02_DM1_DIR}/tmp; \
-	fi && \
+		cp -fr ${BASE_DIR}/download_git/u-boot ./ ;\
+	fi
+	@cd ${GTA02_DM1_DIR}/tmp;
 	if [ ! -e ./devirginator/System_boot.png ]; then \
 		cd ./devirginator && \
 		wget http://wiki.openmoko.org/images/c/c2/System_boot.png; \
+	fi
+	@if [ ! -e ${GTA02_DM1_DIR}/tmp/u-boot/.patched_for_DM1 ]; then \
+		cd ${GTA02_DM1_DIR}/dm1-uboot && \
+			patch -p0 < add_dm1_build_item.diff && \
+			patch -p0 < 
+				add_dm1_patch_neo1973_set_charge_mode.diff && \
+		cp -fr dm1_test ../tmp/u-boot && \
+		touch ${GTA02_DM1_DIR}/tmp/u-boot/.patched_for_DM1; \
 	fi
 	@cd ${GTA02_DM1_DIR}/tmp/u-boot && \
 	if [ ! -e ${GTA02_DM1_DIR}/tmp/u-boot/.config_done ]; then \

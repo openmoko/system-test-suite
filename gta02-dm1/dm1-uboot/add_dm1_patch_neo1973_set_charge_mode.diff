@@ -1,0 +1,34 @@
+--- ../tmp/u-boot/board/neo1973/gta02/gta02.c.origin	2008-06-06 15:40:28.000000000 +0800
++++ ../tmp/u-boot/board/neo1973/gta02/gta02.c	2008-06-06 15:41:43.000000000 +0800
+@@ -630,9 +630,28 @@
+ 
+ int neo1973_set_charge_mode(enum neo1973_charger_cmd cmd)
+ {
+-	/* FIXME */
+-	puts("not implemented yet\n");
+-	return -1;
++	switch (cmd) {
++	case NEO1973_CHGCMD_NONE:
++		break;
++	case NEO1973_CHGCMD_AUTOFAST:
++		break;
++	case NEO1973_CHGCMD_NO_AUTOFAST:
++		break;
++	case NEO1973_CHGCMD_OFF:
++		pcf50633_reg_set_bit_mask(PCF50633_REG_MBCC1,
++					  PCF50633_MBCC1_CHGENA, 0);
++		break;
++
++	case NEO1973_CHGCMD_FAST:
++	case NEO1973_CHGCMD_FASTER:
++		pcf50633_reg_set_bit_mask(PCF50633_REG_MBCC1,
++					  PCF50633_MBCC1_CHGENA, 1);
++		pcf50633_reg_set_bit_mask(PCF50633_REG_MBCC7,
++					  0x7, 1);
++		break;
++	}
++
++	return 0;
+ }
+ 
+ void neo1973_led(int led, int on)
