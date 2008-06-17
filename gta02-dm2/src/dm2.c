@@ -737,6 +737,7 @@ static void on_popup_select(struct oltk_popup *pop, int selected, void *data)
 	active_test = -1;
 }
 
+#if ENABLE_QUIT_BTN
 static void quit_check(struct oltk *oltk)
 {
 	buttons[BUTTON_YES] = oltk_button_add(oltk, 180,
@@ -790,6 +791,7 @@ static void on_quit(struct oltk_button *b, void *data)
 	system("echo 1 > /sys/bus/platform/devices/neo1973-pm-gsm.0/download");
 }
 
+#endif
 static void setup_popup(struct oltk *oltk)
 {
 	int i;
@@ -823,8 +825,10 @@ static void setup_popup(struct oltk *oltk)
 								on_pass, popup);
 	//oltk_button_set_cb(buttons[BUTTON_LOG], OLTK_BUTTON_CB_CLICK,
 	//							on_log, popup);
+#if ENABLE_QUIT_BTN
 	oltk_button_set_cb(buttons[BUTTON_QUIT], OLTK_BUTTON_CB_CLICK,
 								on_quit, popup);
+#endif
 	oltk_button_set_cb(buttons[BUTTON_FAIL], OLTK_BUTTON_CB_CLICK,
 								on_fail, popup);
 }
@@ -843,8 +847,11 @@ static void setup_check(struct oltk *oltk)
 					       BUTTON_MARGIN * 3 +BUTTON_OFFSET,
 					     yres - BUTTON_SIZE - BUTTON_MARGIN,
 						      BUTTON_SIZE, BUTTON_SIZE);
-
+#if ENABLE_QUIT_BTN
 	oltk_button_set_name(buttons[BUTTON_QUIT], "Quit");
+#else
+	oltk_button_set_name(buttons[BUTTON_QUIT], "N.A");
+#endif
 	oltk_button_show(buttons[BUTTON_QUIT], 1);
 	/*
 	   buttons[BUTTON_QUIT] = oltk_button_add(oltk, BUTTON_SIZE*3 + BUTTON_MARGIN * 3 +BUTTON_OFFSET*2,

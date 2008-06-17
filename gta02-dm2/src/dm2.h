@@ -25,6 +25,7 @@
 #define BUTTON_OFFSET 0
 
 #define DEBUG
+#define ENABLE_QUIT_BTN   0
 
 #ifndef BUFSIZ
 #define BUFSIZ 1024
