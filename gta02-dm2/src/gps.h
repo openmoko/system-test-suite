@@ -32,7 +32,7 @@ extern "C" {
 void runtime_init();
 const char* agps_nmea_process(char *buffer512, char* buf, int* fixed);
 const char* agps_nmea_process2(char *buffer512, char* buf, int* fixed);
-const char* nmea_process2(char *buffer512, char *buf, int *fixed);
+const char* nmea_process2(char *buffer512, char *buf, int *fixed, char *cnr_buff);
 
 #ifdef __cplusplus
 }

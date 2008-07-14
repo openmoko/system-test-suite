@@ -9,10 +9,38 @@ extern int set_data(const char* device ,const char* data);
 /*gps.c */
 const char*
 nmea_epoch_end(char * buf512, struct nmea_gga *gga, struct nmea_lor *lor,
-		struct nmea_zda *zda);
+		struct nmea_zda *zda, char *fixed_time);
 
+char fixed_time[8];
+static void do_gps_test(int antenna);
 
-static void do_gps_test(void)
+static void do_gps_test_external(void){
+	do_gps_test(0);
+}
+
+static void do_gps_test_internal(void){
+	do_gps_test(1);
+}
+
+test_t gps_tests[] = {
+	{
+		"External",
+		do_gps_test_external,
+		FALSE,
+		NULL,
+		NULL
+	},
+	{
+		"Internal",
+		do_gps_test_internal,
+		FALSE,
+		NULL,
+		NULL
+	},
+	{ NULL }
+};
+
+static void do_gps_test(int antenna)
 {
 	char buffer[BUFSIZ + 1];
 	pid_t pid;
@@ -36,7 +64,7 @@ static void do_gps_test(void)
 		goto err;
 	}
 
-	countdown(1, FALSE);
+	countdown(3, FALSE);
 
 	if (!set_data(GPS_POWER, "1")) {
 		strcpy(buffer, "Fail");
@@ -91,7 +119,7 @@ static void do_gps_test(void)
 		if (!strncmp(buffer, GGA_SENTENCE_ID, 6)) {
 			GPGGA(buffer, &gga);
 			fixed = atoi(gga.fix_quality);
-			nmea_epoch_end(agps_nema_data, &gga, &n_lor, &zda);
+			nmea_epoch_end(agps_nema_data, &gga, &n_lor, &zda, fixed_time);
 			/* we stop updating the display if we feel we had a fix */
 			if (!fixed) {
 				oltk_view_set_text(view, agps_nema_data);
@@ -104,6 +132,7 @@ static void do_gps_test(void)
 
 	}
 
+	gps_tests[antenna].log=fixed_time;
 	printf("info :%s\n", agps_nema_data);
 	oltk_view_set_text(view, agps_nema_data);
 	oltk_redraw(oltk);
@@ -118,23 +147,4 @@ err:
 bail:
 	fclose(fp);
 }
-
-
-test_t gps_tests[] = {
-	{
-		"External",
-		do_gps_test,
-		FALSE,
-		NULL,
-		NULL
-	},
-	{
-		"Internal",
-		do_gps_test,
-		FALSE,
-		NULL,
-		NULL
-	},
-	{ NULL }
-};
 

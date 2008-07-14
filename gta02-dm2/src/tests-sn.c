@@ -9,6 +9,20 @@ int set_uart_bautrate(char *device, char *speed);
 void gps_reset(int fd, char c);
 int set_data(const char* device ,const char* data);
 
+static void do_gps_sn_test(void);
+
+char cnr_buff[128];
+
+test_t sn_tests[] = {
+	{
+		"CN",
+		do_gps_sn_test,
+		FALSE,
+		NULL,
+		NULL
+	},
+	{ NULL }
+};
 
 static int get_gps_sn_data(FILE *fp, char * buf, int size)
 {
@@ -31,7 +45,7 @@ static int get_gps_sn_data(FILE *fp, char * buf, int size)
 	if (strncmp(temp, GSV_SENTENCE_ID, 6))
 		return 0;
 
-	nmea_process2(buf, temp, &fixed1);
+	nmea_process2(buf, temp, &fixed1, cnr_buff);
 	printf("Translator: %s\n",buf);
 
 	return fixed1;
@@ -105,6 +119,7 @@ static void do_gps_sn_test(void)
 				if (fixed) {
 					fclose(fp);
 					kill(pid, SIGKILL);
+					sn_tests[0].log=cnr_buff;
 					return;
 				}
                         }
@@ -132,16 +147,4 @@ err:
 
 }
 
-
-
-test_t sn_tests[] = {
-	{
-		"CN",
-		do_gps_sn_test,
-		FALSE,
-		NULL,
-		NULL
-	},
-	{ NULL }
-};
 

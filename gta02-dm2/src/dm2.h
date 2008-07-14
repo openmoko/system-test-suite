@@ -39,7 +39,7 @@
 #define KEY_TEST_TIME (RTC_TEST_TIME)
 #define VIBRATOR_TEST_TIME 3 /*(KEY_TEST_TIME) */
 
-#define GPS_TEST_TIME 75 /* 45 */
+#define GPS_TEST_TIME 180 /* previous timeout is 75 */
 #define GPS_SNTEST_TIME 25
 
 #define BT_ON_TEST_TIME 2

@@ -75,9 +75,10 @@ int fix_total = 0;
 
 const char*
 nmea_epoch_end(char * buf512, struct nmea_gga* gga, struct nmea_lor* lor,
-		struct nmea_zda *zda)
+		struct nmea_zda *zda, char * fixed_time)
 {
     char *p = buf512;
+    char *q = fixed_time;
     int nquallity = atoi(gga->fix_quality);
 	static const char * months[] = {
 		"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
@@ -119,6 +120,7 @@ nmea_epoch_end(char * buf512, struct nmea_gga* gga, struct nmea_lor* lor,
 
         }
         p += sprintf(p, " (%ld s)\n", fix_sec);
+	q += sprintf(q, " (%ld s)\n", fix_sec);
     }	
     
     if (gga->time[0])
@@ -193,10 +195,11 @@ nmea_epoch_end(char * buf512, struct nmea_gga* gga, struct nmea_lor* lor,
 extern int table_prn_sn[];
 extern int already_beep;
 
-const char* nmea_process2(char *buffer512, char *buf, int *fixed)
+const char* nmea_process2(char *buffer512, char *buf, int *fixed, char *cnr_buff)
 {
 	int i = 0;
         char *p = buffer512;
+	char *q = cnr_buff;
         int hit_count = 0;
 	char * pbufGSV = strstr(buf, GSV_SENTENCE_ID);
 
@@ -218,6 +221,7 @@ const char* nmea_process2(char *buffer512, char *buf, int *fixed)
                                 already_beep = 1;
                         }
                         p += sprintf(p, "prn: %d, S/N: %d\n", i, table_prn_sn[i]);
+			q += sprintf(q, "prn: %d, S/N: %d\n", i, table_prn_sn[i]);
                         hit_count++;
                 }
 
