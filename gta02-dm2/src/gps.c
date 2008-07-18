@@ -38,6 +38,8 @@
 #include "gps.h"
 
 #define GOT  3
+#define CN_THRESHOLD   38
+
 static struct nmea_gsv n_gsv[GOT];
 
 static unsigned int msStart;
@@ -214,7 +216,7 @@ const char* nmea_process2(char *buffer512, char *buf, int *fixed, char *cnr_buff
 	GPGSV(pbufGSV, &n_gsv[0]);
 
         for (i = 0; i < 32; i++)
-                if (table_prn_sn[i] > 35) {
+                if (table_prn_sn[i] >= CN_THRESHOLD) {
                         if (!already_beep ) {
 				system("alsactl -f /etc/play_wav_speaker.state restore");
             		        system("aplay /usr/share/dm2/bru93q_7s.wav");

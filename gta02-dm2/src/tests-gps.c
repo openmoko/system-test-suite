@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "dm2.h"
 #include "nmea.h"
 
@@ -5,14 +6,20 @@
 extern int set_uart_bautrate(char *device, char *speed);
 extern void gps_reset(int fd, char c);
 extern int set_data(const char* device ,const char* data);
+extern int table_prn_sn[32];
 
 /*gps.c */
 const char*
 nmea_epoch_end(char * buf512, struct nmea_gga *gga, struct nmea_lor *lor,
 		struct nmea_zda *zda, char *fixed_time);
 
-char fixed_time[8];
+char fixed_time[32];
 static void do_gps_test(int antenna);
+
+static inline int cmpint (const void *p1, const void *p2)
+{
+	return (*(int *)p1 > *(int *)p2? 1:0);
+}
 
 static void do_gps_test_external(void){
 	do_gps_test(0);
@@ -46,12 +53,13 @@ static void do_gps_test(int antenna)
 	pid_t pid;
 	pid_t ppid;
 	test_t *tests = suites[active_suite].tests;
-	char agps_nema_data[512];
+	char agps_nema_data[512], tmp[16];
 	FILE *fp;
 	struct nmea_gga gga;
 	struct nmea_lor n_lor;
 	struct nmea_zda zda;
-	int fd;
+	struct nmea_gsv gsv;
+	int fd, i, avg_cn = 0;
 
 	resu = 0;
 	fixed = 0;
@@ -92,6 +100,9 @@ static void do_gps_test(int antenna)
 
 	runtime_init();
 
+	for (i = 0; i < 32; i++)
+		table_prn_sn[i] = -1;
+
 	if (!(pid = fork())) {
 
 		sleep(GPS_TEST_TIME);
@@ -130,7 +141,22 @@ static void do_gps_test(int antenna)
 		if (!strncmp(buffer, ZDA_SENTENCE_ID, 6))
 			nmea_to_ZDA(buffer, &zda); /* update next second, never mind */
 
+		if (!strncmp(buffer, GSV_SENTENCE_ID, 6))
+			GPGSV(buffer, &gsv);
+
 	}
+
+	qsort(table_prn_sn, 32, sizeof(int), cmpint);
+
+	/* obtain the average CN of top 4 CN */
+	for (i=0; i<4; i++)
+		avg_cn += table_prn_sn[28+i];
+
+	avg_cn = (avg_cn/4);
+
+	sprintf(tmp, "\nAvg CN: %d", avg_cn);
+	strcat(agps_nema_data, tmp);
+	strcat(fixed_time, tmp);
 
 	gps_tests[antenna].log=fixed_time;
 	printf("info :%s\n", agps_nema_data);
