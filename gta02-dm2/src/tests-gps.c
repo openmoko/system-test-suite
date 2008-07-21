@@ -149,10 +149,10 @@ static void do_gps_test(int antenna)
 	qsort(table_prn_sn, 32, sizeof(int), cmpint);
 
 	/* obtain the average CN of top 4 CN */
-	for (i=0; i<4; i++)
-		avg_cn += table_prn_sn[28+i];
+	for (i=0; i<3; i++)
+		avg_cn += table_prn_sn[29+i];
 
-	avg_cn = (avg_cn/4);
+	avg_cn = (avg_cn/3);
 
 	sprintf(tmp, "\nAvg CN: %d", avg_cn);
 	strcat(agps_nema_data, tmp);
